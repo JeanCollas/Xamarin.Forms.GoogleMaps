@@ -94,12 +94,6 @@
     <Compile Include="Extensions\PointExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xamarin.Forms.GoogleMaps\Xamarin.Forms.GoogleMaps.csproj">
-      <Project>{F1C8F5A0-A55D-4C7D-9737-472F7AC222D4}</Project>
-      <Name>Xamarin.Forms.GoogleMaps</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
