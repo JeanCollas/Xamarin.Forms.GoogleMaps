@@ -173,7 +173,11 @@ namespace Xamarin.Forms.GoogleMaps
             var newVal = newValue as MapSpan;
             if (newVal == null)
 #if DEBUG
-                throw new ArgumentNullException(nameof(newValue));
+                try
+                {
+                    throw new ArgumentNullException(nameof(newValue));
+                }
+                catch { }
 #else
                 return;
 #endif
