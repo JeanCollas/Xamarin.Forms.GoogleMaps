@@ -199,7 +199,11 @@ namespace Xamarin.Forms.GoogleMaps
         {
             if (mapSpan == null)
 #if DEBUG
-                throw new ArgumentNullException(nameof(mapSpan));
+                try
+                {
+                    throw new ArgumentNullException(nameof(mapSpan));
+                }
+                catch { return; }
 #else
                 return;
 #endif
