@@ -2,7 +2,7 @@
 
 namespace Xamarin.Forms.GoogleMaps
 {
-    public sealed class Pin : BindableObject
+    public class Pin : BindableObject
     {
         public static readonly BindableProperty TypeProperty = BindableProperty.Create("Type", typeof(PinType), typeof(Pin), default(PinType));
 
@@ -49,7 +49,7 @@ namespace Xamarin.Forms.GoogleMaps
             get { return (BitmapDescriptor)GetValue(IconProperty); }
             set { SetValue(IconProperty, value); }
         }
-
+        
         public bool IsDraggable
         {
             get { return (bool)GetValue(IsDraggableProperty); }
@@ -68,7 +68,8 @@ namespace Xamarin.Forms.GoogleMaps
             set { SetValue(AppearAnimationProperty, value); }
         }
 
-
+        public string FullAddress { get; set; }
+        public string Date { get; set; }
 
         public object Tag { get; set; }
 

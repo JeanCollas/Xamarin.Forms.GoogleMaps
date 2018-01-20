@@ -256,9 +256,12 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
             }
             else
             {
-                // lookup pin
-                var targetPin = LookupPin(pin.NativeObject as Marker);
-                (targetPin?.NativeObject as Marker)?.ShowInfoWindow();
+                if (pin.ShowInfoOnClick)
+                {
+                    // lookup pin
+                    var targetPin = LookupPin(pin.NativeObject as Marker);
+                    (targetPin?.NativeObject as Marker)?.ShowInfoWindow();
+                }
             }
         }
 

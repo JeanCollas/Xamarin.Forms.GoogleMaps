@@ -26,6 +26,11 @@ namespace Xamarin.Forms.GoogleMaps
             _groundOverlays.CollectionChanged += GroundOverlays_CollectionChanged;
         }
 
+        public void SetupMap(MapSpan region)
+        {
+            LastMoveToRegion = MapRegion ?? region;
+        }
+
         // center on Rome by default
         public Map() : this(new MapSpan(new Position(41.890202, 12.492049), 0.1, 0.1)) { }
 
