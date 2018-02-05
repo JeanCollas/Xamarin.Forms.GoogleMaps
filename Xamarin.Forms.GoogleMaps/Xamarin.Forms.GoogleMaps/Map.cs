@@ -397,7 +397,7 @@ namespace Xamarin.Forms.GoogleMaps
         }
 
         internal bool SendPinClicked(Pin pin)
-        {
+        { 
             var item = pin?.BindingContext as IPin;
             var args = new PinClickedEventArgs(pin, item);
             PinClicked?.Invoke(this, args);
