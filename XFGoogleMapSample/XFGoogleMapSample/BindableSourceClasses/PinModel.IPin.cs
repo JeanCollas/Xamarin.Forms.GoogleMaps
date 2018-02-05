@@ -59,6 +59,10 @@ namespace XFGoogleMapSample
         private IPinConfig _PinConfig=new SimplePinConfig();
         public IPinConfig PinConfig { get { return _PinConfig; } set { bool changed = _PinConfig != value; if (changed) { OnPropertyChanging(); _PinConfig = value; OnPropertyChanged(); } } }
 
+        public string PinAdress => throw new NotImplementedException();
+
+        public string PinDate => throw new NotImplementedException();
+
         #endregion IPin NOT computed properties
         public int CompareTo(IPin other)
             => ((IPin)this).CompareTo(other);

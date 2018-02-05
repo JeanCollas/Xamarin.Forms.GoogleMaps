@@ -28,7 +28,7 @@ namespace Xamarin.Forms.GoogleMaps
         bool PinIsDraggable { get; }
 
         IPinConfig PinConfig { get; set; }
-
+        
     }
     public interface IPinConfig
     {

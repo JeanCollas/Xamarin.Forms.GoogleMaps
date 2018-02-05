@@ -40,7 +40,7 @@ namespace Xamarin.Forms.GoogleMaps
                                                    //(1 - Math.Cos(2 * demiDLat)) / 2 +
                 Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
                 Math.Pow(Math.Sin(demiDLon), 2);
-                                                   //(1 - Math.Cos(2 * demiDLon)) / 2;
+            //(1 - Math.Cos(2 * demiDLon)) / 2;
             var c = Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             return c * 2 * EarthRadiusKm;
         }
@@ -243,7 +243,7 @@ namespace Xamarin.Forms.GoogleMaps
             double dLng = fromLngRad - toLngRad;
             return 2 * Math.Asin(Math.Sqrt(
                 Math.Pow(Math.Sin(dLat / 2), 2) +
-                    Math.Cos(fromLatRad) * Math.Cos(toLatRad) * 
+                    Math.Cos(fromLatRad) * Math.Cos(toLatRad) *
                     Math.Pow(Math.Sin(dLng / 2), 2)));
         }
 
@@ -270,6 +270,20 @@ namespace Xamarin.Forms.GoogleMaps
             return Math.Atan2(y, x);
         }
         public static double ToBearingDeg(this ISegment s) => ToBearingRad(s).ToDegrees();
+
+        public static string BearingToDirection(double bearing, int precision = 3)
+        { // https://www.movable-type.co.uk/scripts/latlong.html
+            bearing = ((bearing % 360) + 360) % 360; // Normalize to 0-360
+            var cardinals = new string[]{
+       "N", "NNE", "NE", "ENE",
+       "E", "ESE", "SE", "SSE",
+       "S", "SSW", "SW", "WSW",
+       "W", "WNW", "NW", "NNW" };
+            int n = 4 * (int)Math.Pow(2, precision - 1); // no of compass points at req’d precision (1=>4, 2=>8, 3=>16)
+            var cardinal = cardinals[((int)Math.Round(bearing * n / 360, 0)) % n * 16 / n];
+
+            return cardinal;
+        }
 
         #endregion Segment tools
 
