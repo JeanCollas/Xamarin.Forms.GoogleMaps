@@ -34,6 +34,14 @@
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnimationStatus.cs" />
+    <Compile Include="CameraChangedEventArgs.cs" />
+    <Compile Include="CameraIdledEventArgs.cs" />
+    <Compile Include="CameraMoveStartedEventArgs.cs" />
+    <Compile Include="CameraMovingEventArgs.cs" />
+    <Compile Include="CameraPosition.cs" />
+    <Compile Include="CameraUpdate.cs" />
+    <Compile Include="CameraUpdateFactory.cs" />
     <Compile Include="Events\MapMoveEndedEventArgs.cs" />
     <Compile Include="Events\InfoWindowClickedEventArgs.cs" />
     <Compile Include="Events\MapClickedEventArgs.cs" />
@@ -44,6 +52,9 @@
     <Compile Include="Events\SelectedPinChangedEventArgs.cs" />
     <Compile Include="Extensions\GeoConstants.cs" />
     <Compile Include="Extensions\GeoExtensions.cs" />
+    <Compile Include="Extensions\MapSpanExtensions.cs" />
+    <Compile Include="Helpers\CameraUpdateConverter.cs" />
+    <Compile Include="InfoWindowLongClickedEventArgs.cs" />
     <Compile Include="Interfaces\ICircle.cs" />
     <Compile Include="Interfaces\SimpleImplementations\SimpleCircle.cs" />
     <Compile Include="Interfaces\IPin.cs" />
@@ -51,10 +62,25 @@
     <Compile Include="Interfaces\SimpleImplementations\SimplePin.cs" />
     <Compile Include="Interfaces\SimpleImplementations\SimplePinConfig.cs" />
     <Compile Include="Interfaces\SimpleImplementations\SimpleSegment.cs" />
+    <Compile Include="Internals\CameraUpdateMessage.cs" />
+    <Compile Include="Internals\CameraUpdateType.cs" />
     <Compile Include="Internals\Delayer.cs" />
+    <Compile Include="Internals\DelegateAnimationCallback.cs" />
+    <Compile Include="Internals\GeoConstants.cs" />
+    <Compile Include="Internals\IAnimationCallback.cs" />
+    <Compile Include="Internals\IMapRequestDelegate.cs" />
     <Compile Include="Internals\MapSpanTypeConverter.cs" />
     <Compile Include="Internals\PositionJsonConverter.cs" />
+    <Compile Include="Internals\ProductInformation.cs" />
+    <Compile Include="Internals\TakeSnapshotMessage.cs" />
     <Compile Include="Logics\AppearMarkerAnimation.cs" />
+    <Compile Include="Logics\BaseCameraLogic.cs" />
+    <Compile Include="Logics\BaseUiSettingsLogic.cs" />
+    <Compile Include="Logics\DefaultGroundOverlayLogic.cs" />
+    <Compile Include="Logics\DefaultPolygonLogic.cs" />
+    <Compile Include="Logics\DefaultPolylineLogic.cs" />
+    <Compile Include="MapStyle.cs" />
+    <Compile Include="MyLocationButtonClickedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Distance.cs" />
     <Compile Include="Geocoder.cs" />
@@ -79,6 +105,7 @@
     <Compile Include="BitmapDescriptorType.cs" />
     <Compile Include="GroundOverlay.cs" />
     <Compile Include="Bounds.cs" />
+    <Compile Include="UiSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

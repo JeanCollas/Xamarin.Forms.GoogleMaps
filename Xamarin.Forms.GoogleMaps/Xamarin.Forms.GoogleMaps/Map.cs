@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms.GoogleMaps.Events;
 using Xamarin.Forms.GoogleMaps.Internals;
@@ -33,6 +35,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         // center on Rome by default
         public Map() : this(new MapSpan(new Position(41.890202, 12.492049), 0.1, 0.1)) { }
+        public UiSettings UiSettings { get; } = new UiSettings();
 
         #region PinsSource Property
         public static readonly BindableProperty PinsSourceProperty = BindableProperty.Create(nameof(PinsSource), typeof(ObservableCollection<IPin>), typeof(Map), null, propertyChanged: OnPinsSourceChanged);
@@ -219,9 +222,41 @@ namespace Xamarin.Forms.GoogleMaps
 
         public const string MoveMessageName = "MapMoveToRegion";
 
-#endregion MapRegion
 
-#region Selected Pin/Item
+        public Task<AnimationStatus> MoveCamera(CameraUpdate cameraUpdate)
+        {
+            var comp = new TaskCompletionSource<AnimationStatus>();
+
+            SendMoveCamera(new CameraUpdateMessage(cameraUpdate, null, new DelegateAnimationCallback(
+                () => comp.SetResult(AnimationStatus.Finished),
+                () => comp.SetResult(AnimationStatus.Canceled))));
+
+            return comp.Task;
+        }
+
+        public Task<AnimationStatus> AnimateCamera(CameraUpdate cameraUpdate, TimeSpan? duration = null)
+        {
+            var comp = new TaskCompletionSource<AnimationStatus>();
+
+            SendAnimateCamera(new CameraUpdateMessage(cameraUpdate, duration, new DelegateAnimationCallback(
+                () => comp.SetResult(AnimationStatus.Finished),
+                () => comp.SetResult(AnimationStatus.Canceled))));
+
+            return comp.Task;
+        }
+
+
+        public Task<Stream> TakeSnapshot()
+        {
+            var comp = new TaskCompletionSource<Stream>();
+
+            SendTakeSnapshot(new TakeSnapshotMessage(image => comp.SetResult(image)));
+
+            return comp.Task;
+        }
+        #endregion MapRegion
+
+        #region Selected Pin/Item
 
         public static readonly BindableProperty SelectedPinProperty = BindableProperty.Create(nameof(SelectedPin), typeof(Pin), typeof(Map), default(Pin), defaultBindingMode: BindingMode.TwoWay, propertyChanged: OnSelectedPinChanged);
 
@@ -243,14 +278,18 @@ namespace Xamarin.Forms.GoogleMaps
 
         public IPin SelectedItem { get { return (IPin)GetValue(SelectedItemProperty); } set { SetValue(SelectedItemProperty, value); } }
 
-#endregion Selected Pin/Item
+        #endregion Selected Pin/Item
 
-#region Map Config
+        #region Map Config
         public static readonly BindableProperty MapTypeProperty = BindableProperty.Create(nameof(MapType), typeof(MapType), typeof(Map), default(MapType));
 
         public static readonly BindableProperty IsShowingCompasProperty = BindableProperty.Create(nameof(IsShowingCompas), typeof(bool), typeof(Map), default(bool));
 
         public static readonly BindableProperty IsShowingUserProperty = BindableProperty.Create(nameof(IsShowingUser), typeof(bool), typeof(Map), default(bool));
+
+        public static readonly BindableProperty HasRotationEnabledProperty = BindableProperty.Create(nameof(HasRotationEnabled), typeof(bool), typeof(Map), true);
+
+        public static readonly BindableProperty MyLocationEnabledProperty = BindableProperty.Create(nameof(MyLocationEnabled), typeof(bool), typeof(Map), default(bool));
 
         public static readonly BindableProperty HasScrollEnabledProperty = BindableProperty.Create(nameof(HasScrollEnabled), typeof(bool), typeof(Map), true);
 
@@ -260,7 +299,29 @@ namespace Xamarin.Forms.GoogleMaps
 
         public static readonly BindableProperty IsTrafficEnabledProperty = BindableProperty.Create(nameof(IsTrafficEnabled), typeof(bool), typeof(Map), false);
 
+        public static readonly BindableProperty IndoorEnabledProperty = BindableProperty.Create(nameof(IsIndoorEnabled), typeof(bool), typeof(Map), true);
 
+        public static readonly BindableProperty InitialCameraUpdateProperty = BindableProperty.Create(nameof(InitialCameraUpdate), typeof(CameraUpdate), typeof(Map),
+    CameraUpdateFactory.NewPositionZoom(new Position(41.89, 12.49), 10),  // center on Rome by default
+    propertyChanged: (bindable, oldValue, newValue) => { ((Map)bindable)._useMoveToRegisonAsInitialBounds = false; });
+
+        public static readonly BindableProperty PaddingProperty = BindableProperty.Create(nameof(PaddingProperty), typeof(Thickness), typeof(Map), default(Thickness));
+
+        bool _useMoveToRegisonAsInitialBounds = true;
+
+        public static readonly BindableProperty CameraPositionProperty = BindableProperty.Create(
+            nameof(CameraPosition), typeof(CameraPosition), typeof(Map),
+            defaultValueCreator: (bindable) => new CameraPosition(((Map)bindable).InitialCameraUpdate.Position, 10),
+            defaultBindingMode: BindingMode.TwoWay);
+
+        public static readonly BindableProperty MapStyleProperty = BindableProperty.Create(nameof(MapStyle), typeof(MapStyle), typeof(Map), null);
+
+        [Obsolete("Please use Map.UiSettings.RotateGesturesEnabled instead of this")]
+        public bool HasRotationEnabled
+        {
+            get { return (bool)GetValue(HasRotationEnabledProperty); }
+            set { SetValue(HasRotationEnabledProperty, value); }
+        }
         public bool HasScrollEnabled { get { return (bool)GetValue(HasScrollEnabledProperty); } set { SetValue(HasScrollEnabledProperty, value); } }
 
         public bool HasZoomEnabled { get { return (bool)GetValue(HasZoomEnabledProperty); } set { SetValue(HasZoomEnabledProperty, value); } }
@@ -272,12 +333,38 @@ namespace Xamarin.Forms.GoogleMaps
 
         public bool IsShowingCompas { get { return (bool)GetValue(IsShowingCompasProperty); } set { SetValue(IsShowingCompasProperty, value); } }
 
+        [Obsolete("Please use Map.MyLocationEnabled and Map.UiSettings.MyLocationButtonEnabled instead of this")]
         public bool IsShowingUser { get { return (bool)GetValue(IsShowingUserProperty); } set { SetValue(IsShowingUserProperty, value); } }
 
-        public MapType MapType { get { return (MapType)GetValue(MapTypeProperty); } set { SetValue(MapTypeProperty, value); } }
-#endregion Map Config
+        public bool MyLocationEnabled { get { return (bool)GetValue(MyLocationEnabledProperty); } set { SetValue(MyLocationEnabledProperty, value); } }
 
-#region Map Internal Data
+        public MapType MapType { get { return (MapType)GetValue(MapTypeProperty); } set { SetValue(MapTypeProperty, value); } }
+
+        public bool IsIndoorEnabled { get { return (bool)GetValue(IndoorEnabledProperty); } set { SetValue(IndoorEnabledProperty, value); } }
+
+        [TypeConverter(typeof(CameraUpdateConverter))]
+        public CameraUpdate InitialCameraUpdate { get { return (CameraUpdate)GetValue(InitialCameraUpdateProperty); } set { SetValue(InitialCameraUpdateProperty, value); } }
+
+        public CameraPosition CameraPosition
+        {
+            get { return (CameraPosition)GetValue(CameraPositionProperty); }
+            internal set { SetValue(CameraPositionProperty, value); }
+        }
+
+        public Thickness Padding
+        {
+            get { return (Thickness)GetValue(PaddingProperty); }
+            set { SetValue(PaddingProperty, value); }
+        }
+
+        public MapStyle MapStyle
+        {
+            get { return (MapStyle)GetValue(MapStyleProperty); }
+            set { SetValue(MapStyleProperty, value); }
+        }
+        #endregion Map Config
+
+        #region Map Internal Data
         readonly ObservableCollection<Pin> _pins = new ObservableCollection<Pin>();
         readonly ObservableCollection<Polyline> _polylines = new ObservableCollection<Polyline>();
         readonly ObservableCollection<Polygon> _polygons = new ObservableCollection<Polygon>();
@@ -302,9 +389,9 @@ namespace Xamarin.Forms.GoogleMaps
 
         public IEnumerator<Pin> GetEnumerator() => _pins.GetEnumerator();
 
-#endregion Map Internal Data
+        #endregion Map Internal Data
 
-#region Data input consistency check
+        #region Data input consistency check
 
         void PinsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -341,12 +428,13 @@ namespace Xamarin.Forms.GoogleMaps
         {
         }
 
-#endregion Data input consistency check
+        #endregion Data input consistency check
 
-#region Map events
+        #region Map events
         public event EventHandler<PinClickedEventArgs> PinClicked;
         public event EventHandler<SelectedPinChangedEventArgs> SelectedPinChanged;
         public event EventHandler<InfoWindowClickedEventArgs> InfoWindowClicked;
+        public event EventHandler<InfoWindowLongClickedEventArgs> InfoWindowLongClicked;
 
         public event EventHandler<PinDragEventArgs> PinDragStart;
         public event EventHandler<PinDragEventArgs> PinDragEnd;
@@ -356,6 +444,21 @@ namespace Xamarin.Forms.GoogleMaps
         public event EventHandler<MapLongClickedEventArgs> MapLongClicked;
 
         public event EventHandler<MapMoveEndedEventArgs> MapMoveEnded;
+        public event EventHandler<MyLocationButtonClickedEventArgs> MyLocationButtonClicked;
+
+        [Obsolete("Please use Map.CameraIdled instead of this")]
+        public event EventHandler<CameraChangedEventArgs> CameraChanged;
+        public event EventHandler<CameraMoveStartedEventArgs> CameraMoveStarted;
+        public event EventHandler<CameraMovingEventArgs> CameraMoving;
+        public event EventHandler<CameraIdledEventArgs> CameraIdled;
+
+        internal Action<MoveToRegionMessage> OnMoveToRegion { get; set; }
+
+        internal Action<CameraUpdateMessage> OnMoveCamera { get; set; }
+
+        internal Action<CameraUpdateMessage> OnAnimateCamera { get; set; }
+
+        internal Action<TakeSnapshotMessage> OnSnapshot { get; set; }
 
 
         public static readonly BindableProperty SelectedPinChangedCommandProperty = BindableProperty.Create(nameof(SelectedPinChangedCommand), typeof(ICommand), typeof(Map), null);
@@ -397,7 +500,7 @@ namespace Xamarin.Forms.GoogleMaps
         }
 
         internal bool SendPinClicked(Pin pin)
-        { 
+        {
             var item = pin?.BindingContext as IPin;
             var args = new PinClickedEventArgs(pin, item);
             PinClicked?.Invoke(this, args);
@@ -415,6 +518,12 @@ namespace Xamarin.Forms.GoogleMaps
             if (InfoWindowClickedCommand?.CanExecute(args) ?? false) InfoWindowClickedCommand.Execute(args);
             if (item?.PinConfig?.InfoWindowClickedCommand?.CanExecute(item?.PinConfig?.InfoWindowClickedCommandParameter ?? args) ?? false)
                 item.PinConfig?.InfoWindowClickedCommand.Execute(item?.PinConfig?.InfoWindowClickedCommandParameter ?? args);
+        }
+
+        internal void SendInfoWindowLongClicked(Pin pin)
+        {
+            var args = new InfoWindowLongClickedEventArgs(pin);
+            InfoWindowLongClicked?.Invoke(this, args);
         }
 
         internal void SendPinDragStart(Pin pin)
@@ -469,12 +578,60 @@ namespace Xamarin.Forms.GoogleMaps
         }
 
 
-#endregion Map events
+        #endregion Map events
+
 
         public const string CenterOnMyLocationMessageName = "CenterOnMyLocation";
         public void CenterOnMyLocation()
         {
             MessagingCenter.Send(this, CenterOnMyLocationMessageName);
+        }
+
+        internal bool SendMyLocationClicked()
+        {
+            var args = new MyLocationButtonClickedEventArgs();
+            MyLocationButtonClicked?.Invoke(this, args);
+            return args.Handled;
+        }
+
+        internal void SendCameraChanged(CameraPosition position)
+        {
+            CameraChanged?.Invoke(this, new CameraChangedEventArgs(position));
+        }
+
+        internal void SendCameraMoveStarted(bool isGesture)
+        {
+            CameraMoveStarted?.Invoke(this, new CameraMoveStartedEventArgs(isGesture));
+        }
+
+        internal void SendCameraMoving(CameraPosition position)
+        {
+            CameraMoving?.Invoke(this, new CameraMovingEventArgs(position));
+        }
+
+        internal void SendCameraIdled(CameraPosition position)
+        {
+            CameraIdled?.Invoke(this, new CameraIdledEventArgs(position));
+        }
+
+        private void SendMoveToRegion(MoveToRegionMessage message)
+        {
+            OnMoveToRegion?.Invoke(message);
+        }
+
+        void SendMoveCamera(CameraUpdateMessage message)
+        {
+            OnMoveCamera?.Invoke(message);
+        }
+
+        void SendAnimateCamera(CameraUpdateMessage message)
+        {
+            OnAnimateCamera?.Invoke(message);
+        }
+
+        void SendTakeSnapshot(TakeSnapshotMessage message)
+        {
+            OnSnapshot?.Invoke(message);
         }
     }
 }

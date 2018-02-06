@@ -144,6 +144,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
         {
             if (map != null)
             {
+
                 map.SetOnMapClickListener(this);
                 map.SetOnMapLongClickListener(this);
                 map.UiSettings.MapToolbarEnabled = false;

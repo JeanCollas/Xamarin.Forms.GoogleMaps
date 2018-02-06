@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 
 namespace Xamarin.Forms.GoogleMaps
 {
@@ -7,6 +8,21 @@ namespace Xamarin.Forms.GoogleMaps
     {
         public Position SouthWest { get; }
         public Position NorthEast { get; }
+        public Position SouthEast
+        {
+            get
+            {
+                return new Position(SouthWest.Latitude, NorthEast.Longitude);
+            }
+        }
+
+        public Position NorthWest
+        {
+            get
+            {
+                return new Position(NorthEast.Latitude, SouthWest.Longitude);
+            }
+        }
 
         public Position Center
         {
@@ -33,6 +49,36 @@ namespace Xamarin.Forms.GoogleMaps
             }
         }
 
+        public static Bounds FromPositions(IEnumerable<Position> positions)
+        {
+            if (positions == null)
+            {
+                throw new ArgumentNullException(nameof(positions));
+            }
+
+            var minX = double.MaxValue;
+            var minY = double.MaxValue;
+            var maxX = double.MinValue;
+            var maxY = double.MinValue;
+            var isEmpty = true;
+
+            foreach (var p in positions)
+            {
+                isEmpty = false;
+                minX = Math.Min(minX, p.Longitude);
+                minY = Math.Min(minY, p.Latitude);
+                maxX = Math.Max(maxX, p.Longitude);
+                maxY = Math.Max(maxY, p.Latitude);
+            }
+
+            if (isEmpty)
+            {
+                throw new ArgumentException(@"{nameof(positions)} is empty");
+            }
+
+            return new Bounds(new Position(minY, minX), new Position(maxY, maxX));
+        }
+
         public Bounds(Position southWest, Position northEast)
         {
             SouthWest = southWest;
@@ -45,6 +91,16 @@ namespace Xamarin.Forms.GoogleMaps
             var minY = Math.Min(SouthWest.Latitude, position.Latitude);
             var maxX = Math.Max(NorthEast.Longitude, position.Longitude);
             var maxY = Math.Max(NorthEast.Latitude, position.Latitude);
+
+            return new Bounds(new Position(minY, minX), new Position(maxY, maxX));
+        }
+
+        public Bounds Including(Bounds other)
+        {
+            var minX = Math.Min(SouthWest.Longitude, other.SouthEast.Longitude);
+            var minY = Math.Min(SouthWest.Latitude, other.SouthWest.Latitude);
+            var maxX = Math.Max(NorthEast.Longitude, other.NorthEast.Longitude);
+            var maxY = Math.Max(NorthEast.Latitude, other.NorthEast.Latitude);
 
             return new Bounds(new Position(minY, minX), new Position(maxY, maxX));
         }

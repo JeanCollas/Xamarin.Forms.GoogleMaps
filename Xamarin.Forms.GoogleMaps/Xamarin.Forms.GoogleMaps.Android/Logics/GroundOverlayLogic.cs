@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Xamarin.Forms.GoogleMaps.Logics.Android
 {
-    internal class GroundOverlayLogic : DefaultLogic<GroundOverlay, NativeGroundOverlay, GoogleMap>
+    internal class GroundOverlayLogic : DefaultGroundOverlayLogic<NativeGroundOverlay, GoogleMap>
     {
         protected override IList<GroundOverlay> GetItems(Map map) => map.GroundOverlays;
 
@@ -41,7 +41,8 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
                 .Clickable(outerItem.IsClickable)
                 .InvokeBearing(outerItem.Bearing)
                 .InvokeImage(outerItem.Icon.ToBitmapDescriptor())
-                .InvokeTransparency(outerItem.Transparency);
+                .InvokeTransparency(outerItem.Transparency)
+                .InvokeZIndex(outerItem.ZIndex);
 
             var overlay = NativeMap.AddGroundOverlay(opts);
 
@@ -75,37 +76,67 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
             targetOuterItem?.SendTap();
         }
 
-        protected override void OnItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        internal override void OnUpdateBearing(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
         {
-            base.OnItemPropertyChanged(sender, e);
-
-            var overlay = sender as GroundOverlay;
-            var nativeOverlay = overlay?.NativeObject as NativeGroundOverlay;
-
-            if (nativeOverlay == null)
-                return;
-
-            if (e.PropertyName == GroundOverlay.BearingProperty.PropertyName)
-            {
-                nativeOverlay.Bearing = overlay.Bearing;
-            }
-            else if (e.PropertyName == GroundOverlay.BoundsProperty.PropertyName)
-            {
-                nativeOverlay.SetPositionFromBounds(overlay.Bounds.ToLatLngBounds());
-            }
-            else if (e.PropertyName == GroundOverlay.IconProperty.PropertyName)
-            {
-                nativeOverlay.SetImage(overlay.Icon.ToBitmapDescriptor());
-            }
-            else if (e.PropertyName == GroundOverlay.IsClickableProperty.PropertyName)
-            {
-                nativeOverlay.Clickable = overlay.IsClickable;
-            }
-            else if (e.PropertyName == GroundOverlay.TransparencyProperty.PropertyName)
-            {
-                nativeOverlay.Transparency = overlay.Transparency;
-            }
+            nativeItem.Bearing = outerItem.Bearing;
         }
+
+        internal override void OnUpdateBounds(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.SetPositionFromBounds(outerItem.Bounds.ToLatLngBounds());
+        }
+
+        internal override void OnUpdateIcon(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.SetImage(outerItem.Icon.ToBitmapDescriptor());
+        }
+
+        internal override void OnUpdateIsClickable(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.Clickable = outerItem.IsClickable;
+        }
+
+        internal override void OnUpdateTransparency(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.Transparency = outerItem.Transparency;
+        }
+
+        internal override void OnUpdateZIndex(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.ZIndex = outerItem.ZIndex;
+        }
+
+        //protected override void OnItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    base.OnItemPropertyChanged(sender, e);
+
+        //    var overlay = sender as GroundOverlay;
+        //    var nativeOverlay = overlay?.NativeObject as NativeGroundOverlay;
+
+        //    if (nativeOverlay == null)
+        //        return;
+
+        //    if (e.PropertyName == GroundOverlay.BearingProperty.PropertyName)
+        //    {
+        //        nativeOverlay.Bearing = overlay.Bearing;
+        //    }
+        //    else if (e.PropertyName == GroundOverlay.BoundsProperty.PropertyName)
+        //    {
+        //        nativeOverlay.SetPositionFromBounds(overlay.Bounds.ToLatLngBounds());
+        //    }
+        //    else if (e.PropertyName == GroundOverlay.IconProperty.PropertyName)
+        //    {
+        //        nativeOverlay.SetImage(overlay.Icon.ToBitmapDescriptor());
+        //    }
+        //    else if (e.PropertyName == GroundOverlay.IsClickableProperty.PropertyName)
+        //    {
+        //        nativeOverlay.Clickable = overlay.IsClickable;
+        //    }
+        //    else if (e.PropertyName == GroundOverlay.TransparencyProperty.PropertyName)
+        //    {
+        //        nativeOverlay.Transparency = overlay.Transparency;
+        //    }
+        //}
     }
 }
 
