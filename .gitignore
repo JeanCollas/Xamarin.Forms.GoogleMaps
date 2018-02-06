@@ -47,3 +47,9 @@ XFGoogleMapSample/XFGoogleMapSample/Variables_sample.cs
 XFGoogleMapSample/XFGoogleMapSample/Variables_sample.cs
 Xamarin.Forms.GoogleMaps/.vs/Xamarin.Forms.GoogleMaps_with_sample/v15/Server/sqlite3/db.lock
 *.lock
+*.ide
+*.ide
+*.ide-shm
+*.ide-wal
+XFGoogleMapSample/XFGoogleMapSample/Variables.cs
+Xamarin.Forms.GoogleMaps/.vs/Xamarin.Forms.GoogleMaps_with_sample/v15/Server/sqlite3/storage.ide
