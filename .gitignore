@@ -43,3 +43,7 @@ Thumbs.db
 *.nupkg
 *.lock.json
 .idea/
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
