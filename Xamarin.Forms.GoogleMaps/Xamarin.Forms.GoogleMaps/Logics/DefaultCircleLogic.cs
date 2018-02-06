@@ -22,6 +22,8 @@ namespace Xamarin.Forms.GoogleMaps.Logics
             else if (e.PropertyName == Circle.FillColorProperty.PropertyName) OnUpdateFillColor(outerItem, nativeItem);
             else if (e.PropertyName == Circle.CenterProperty.PropertyName) OnUpdateCenter(outerItem, nativeItem);
             else if (e.PropertyName == Circle.RadiusProperty.PropertyName) OnUpdateRadius(outerItem, nativeItem);
+            else if (e.PropertyName == Circle.IsClickableProperty.PropertyName) OnUpdateIsClickable(outerItem, nativeItem);
+            else if (e.PropertyName == Circle.ZIndexProperty.PropertyName) OnUpdateZIndex(outerItem, nativeItem);
         }
 
         protected abstract void OnUpdateStrokeWidth(Circle outerItem, TNative nativeItem);
@@ -33,6 +35,10 @@ namespace Xamarin.Forms.GoogleMaps.Logics
         protected abstract void OnUpdateCenter(Circle outerItem, TNative nativeItem);
 
         protected abstract void OnUpdateRadius(Circle outerItem, TNative nativeItem);
+
+        protected abstract void OnUpdateIsClickable(Circle outerItem, TNative nativeItem);
+
+        protected abstract void OnUpdateZIndex(Circle outerItem, TNative nativeItem);
     }
 }
 

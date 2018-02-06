@@ -30,25 +30,17 @@ namespace XFGoogleMapSample
             };
 
             // Transparency
-            entryTransparency.Text = "0.5";
-            entryTransparency.TextChanged += (sender, e) =>
+            sliderTransparency.Value = 3;
+            sliderTransparency.ValueChanged += (sender, e) =>
             {
-                var transparency = 0f;
-                if (float.TryParse(e.NewTextValue, out transparency))
-                {
-                    _overlay.Transparency = transparency;
-                }
+                _overlay.Transparency = (float)(e.NewValue / 10f);
             };
 
             // Bearing
-            entryBearing.Text = "0";
-            entryBearing.TextChanged += (sender, e) =>
+            sliderBearing.Value = 0;
+            sliderBearing.ValueChanged += (sender, e) =>
             {
-                var bearing = 0f;
-                if (float.TryParse(e.NewTextValue, out bearing))
-                {
-                    _overlay.Bearing = bearing;
-                }
+                _overlay.Bearing = (float)e.NewValue;
             };
 
             // IsClickable
@@ -62,17 +54,39 @@ namespace XFGoogleMapSample
             {
                 Bounds = new Bounds(new Position(37.797496, -122.402054), new Position(37.798573, -122.401065)),
                 Icon = BitmapDescriptorFactory.FromBundle("image01.png"),
-                Transparency = 0.5f,
-                Tag = "THE GROUNDOVERLAY"
+                Tag = "THE GROUNDOVERLAY",
+                Transparency = (float)(sliderTransparency.Value / 10f),
+                ZIndex = 2
             };
             map.GroundOverlays.Add(_overlay);
+
+            var offset = 0.00025d;
+            map.GroundOverlays.Add(new GroundOverlay()
+            {
+                Bounds = new Bounds(
+                    new Position(37.797496 + offset, -122.402054 + offset), 
+                    new Position(37.798573 + offset, -122.401065 + offset)),
+                Icon = BitmapDescriptorFactory.FromBundle("image02.png"),
+                ZIndex = 1
+            });
+
+            // ZIndex(to Front) 
+            buttonToFront.Clicked += (sender, e) =>
+            {
+                _overlay.ZIndex = 2;
+            };
+
+            // ZIndex(to Back) 
+            buttonToBack.Clicked += (sender, e) =>
+            {
+                _overlay.ZIndex = 0;
+            };
 
             _overlay.Clicked += (sender, e) =>
             {
                 var overlay = sender as GroundOverlay;
                 this.DisplayAlert("Clicked", overlay.Tag as string, "CLOSE");
             };
-
 
             var polygon = new Polygon()
             {
@@ -88,7 +102,7 @@ namespace XFGoogleMapSample
 
             map.Polygons.Add(polygon);
 
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(37.797496, -122.402054), Distance.FromMeters(200)), false);
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(37.797496 + offset, -122.402054 + offset), Distance.FromMeters(200)), false);
         }
 
         void UpdateIcon(int selectedIndex)

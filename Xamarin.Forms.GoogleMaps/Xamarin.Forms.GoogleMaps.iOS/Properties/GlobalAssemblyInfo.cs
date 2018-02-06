@@ -1,8 +1,9 @@
 ﻿using System.Reflection;
+using Xamarin.Forms.GoogleMaps.Internals;
 
-[assembly: AssemblyCompany("amay077")]
-[assembly: AssemblyProduct("Xamarin.Forms.GoogleMaps")]
-[assembly: AssemblyCopyright("Copyright © amay077. 2016")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyVersion("1.7.0.6")]
-[assembly: AssemblyFileVersion("1.7.0.6")]
+[assembly: AssemblyCompany(ProductInformation.Author)]
+[assembly: AssemblyProduct(ProductInformation.Name)]
+[assembly: AssemblyCopyright(ProductInformation.Copyright)]
+[assembly: AssemblyTrademark(ProductInformation.Trademark)]
+[assembly: AssemblyVersion(ProductInformation.Version)]
+[assembly: AssemblyFileVersion(ProductInformation.Version)]

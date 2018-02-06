@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Xamarin.Forms.GoogleMaps.Logics.iOS
 {
-    internal class GroundOverlayLogic : DefaultLogic<GroundOverlay, NativeGroundOverlay, MapView>
+    internal class GroundOverlayLogic : DefaultGroundOverlayLogic<NativeGroundOverlay, MapView>
     {
         protected override IList<GroundOverlay> GetItems(Map map) => map.GroundOverlays;
 
@@ -38,8 +38,9 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             var nativeOverlay = NativeGroundOverlay.GetGroundOverlay(
                 outerItem.Bounds.ToCoordinateBounds(), outerItem.Icon.ToUIImage());
             nativeOverlay.Bearing = outerItem.Bearing;
-            nativeOverlay.Opacity = outerItem.Transparency;
+            nativeOverlay.Opacity = 1 - outerItem.Transparency;
             nativeOverlay.Tappable = outerItem.IsClickable;
+            nativeOverlay.ZIndex = outerItem.ZIndex;
 
             outerItem.NativeObject = nativeOverlay;
             nativeOverlay.Map = NativeMap;
@@ -61,36 +62,34 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             targetOuterItem?.SendTap();
         }
 
-        protected override void OnItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        internal override void OnUpdateBearing(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
         {
-            base.OnItemPropertyChanged(sender, e);
+            nativeItem.Bearing = outerItem.Bearing;
+        }
 
-            var overlay = sender as GroundOverlay;
-            var nativeOverlay = overlay?.NativeObject as NativeGroundOverlay;
+        internal override void OnUpdateBounds(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.Bounds = outerItem.Bounds.ToCoordinateBounds();
+        }
 
-            if (nativeOverlay == null)
-                return;
+        internal override void OnUpdateIcon(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.Icon = outerItem.Icon.ToUIImage();
+        }
 
-            if (e.PropertyName == GroundOverlay.BearingProperty.PropertyName)
-            {
-                nativeOverlay.Bearing = overlay.Bearing;
-            }
-            else if (e.PropertyName == GroundOverlay.BoundsProperty.PropertyName)
-            {
-                nativeOverlay.Bounds = overlay.Bounds.ToCoordinateBounds();
-            }
-            else if (e.PropertyName == GroundOverlay.IconProperty.PropertyName)
-            {
-                nativeOverlay.Icon = overlay.Icon.ToUIImage();
-            }
-            else if (e.PropertyName == GroundOverlay.IsClickableProperty.PropertyName)
-            {
-                nativeOverlay.Tappable = overlay.IsClickable;
-            }
-            else if (e.PropertyName == GroundOverlay.TransparencyProperty.PropertyName)
-            {
-                nativeOverlay.Opacity = overlay.Transparency;
-            }
+        internal override void OnUpdateIsClickable(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.Tappable = outerItem.IsClickable;
+        }
+
+        internal override void OnUpdateTransparency(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.Opacity = 1f - outerItem.Transparency;
+        }
+
+        internal override void OnUpdateZIndex(GroundOverlay outerItem, NativeGroundOverlay nativeItem)
+        {
+            nativeItem.ZIndex = outerItem.ZIndex;
         }
     }
 }

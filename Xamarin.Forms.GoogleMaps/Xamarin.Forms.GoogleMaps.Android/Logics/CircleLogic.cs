@@ -6,11 +6,32 @@ using Xamarin.Forms.Platform.Android;
 using NativeCircle = Android.Gms.Maps.Model.Circle;
 using Xamarin.Forms.GoogleMaps.Android;
 using Android.Gms.Maps;
+using System.Linq;
 
 namespace Xamarin.Forms.GoogleMaps.Logics.Android
 {
     internal class CircleLogic : DefaultCircleLogic<NativeCircle, GoogleMap>
     {
+        internal override void Register(GoogleMap oldNativeMap, Map oldMap, GoogleMap newNativeMap, Map newMap)
+        {
+            base.Register(oldNativeMap, oldMap, newNativeMap, newMap);
+
+            if (newNativeMap != null)
+            {
+                newNativeMap.CircleClick += OnCircleClick;
+            }
+        }
+
+        internal override void Unregister(GoogleMap nativeMap, Map map)
+        {
+            if (nativeMap != null)
+            {
+                nativeMap.CircleClick -= OnCircleClick;
+            }
+
+            base.Unregister(nativeMap, map);
+        }
+
         protected override IList<Circle> GetItems(Map map) => map.Circles;
 
         protected override NativeCircle CreateNativeItem(Circle outerItem)
@@ -22,7 +43,8 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
             opts.InvokeStrokeWidth(outerItem.StrokeWidth * this.ScaledDensity); // TODO: convert from px to pt. Is this collect? (looks like same iOS Maps)
             opts.InvokeStrokeColor(outerItem.StrokeColor.ToAndroid());
             opts.InvokeFillColor(outerItem.FillColor.ToAndroid());
-            //opts.Clickable(outerItem.IsClickable);
+            opts.Clickable(outerItem.IsClickable);
+            opts.InvokeZIndex(outerItem.ZIndex);
 
             var nativeCircle = NativeMap.AddCircle(opts);
 
@@ -40,6 +62,20 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
             return nativeCircle;
         }
 
+        private void OnCircleClick(object sender, GoogleMap.CircleClickEventArgs e)
+        {
+            // clicked circle
+            var nativeItem = e.Circle;
+
+            // lookup circle
+            var targetOuterItem = GetItems(Map).FirstOrDefault(
+                outerItem => ((NativeCircle)outerItem.NativeObject).Id == nativeItem.Id);
+
+            // only consider event handled if a handler is present.
+            // Else allow default behavior of displaying an info window.
+            targetOuterItem?.SendTap();
+        }
+
         protected override void OnUpdateStrokeWidth(Circle outerItem, NativeCircle nativeItem)
             => nativeItem.StrokeWidth = outerItem.StrokeWidth;
 
@@ -54,6 +90,12 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
 
         protected override void OnUpdateRadius(Circle outerItem, NativeCircle nativeItem)
             => nativeItem.Radius = outerItem.Radius.Meters;
+
+        protected override void OnUpdateIsClickable(Circle outerItem, NativeCircle nativeItem)
+            => nativeItem.Clickable = outerItem.IsClickable;
+
+        protected override void OnUpdateZIndex(Circle outerItem, NativeCircle nativeItem)
+            => nativeItem.ZIndex = outerItem.ZIndex;
     }
 }
 

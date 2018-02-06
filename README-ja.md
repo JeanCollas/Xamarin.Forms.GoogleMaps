@@ -1,4 +1,4 @@
-## ![](logo.png) Xamarin.Forms.GoogleMaps
+## ![](logo.png) Xamarin.Forms.GoogleMaps [![Build status](https://build.mobile.azure.com/v0.1/apps/99e6fb9e-fe8c-49df-b190-8aa1732a0ad2/branches/master/badge)](https://mobile.azure.com) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Xamarin-Forms-GoogleMaps/public)
 
 [English README is here！](README.md)
 
@@ -6,9 +6,17 @@ Xamarin.Forms 用の Googleマップライブラリです。
 
 [Xamarin.Forms.Maps](https://github.com/xamarin/Xamarin.Forms) をフォークして作っているので、使い方はほとんど同じです。
 
+
+## デモアプリ
+
+このライブラリの全ての機能が試せるデモアプリを以下より配信しています。このアプリのソースは [XFGoogleMapSample](https://github.com/amay077/Xamarin.Forms.GoogleMaps/tree/master/XFGoogleMapSample) です。
+
+* [Android DEMO Apps](https://install.mobile.azure.com/users/okuokuoku/apps/xfgooglemapsample/distribution_groups/trial) - このリンクをAndroidのブラウザで開いてください
+* iOS DEMO Apps - [Gitter](https://gitter.im/Xamarin-Forms-GoogleMaps/public) かなにかでリクエストしてください（デバイスのUUIDを教えてもらう必要があります）
+
 ![screenshot](screenshot01.png)
 
-### なぜこれを作った
+## なぜこれを作った
 
 Xamarin公式の地図ライブラリ [Xamarin.Forms.Maps](https://developer.xamarin.com/guides/xamarin-forms/user-interface/map/) は、非常に機能が少ないです（Googleマップ、Appleマップ、Bingマップで機能を共通化するのはとても難しいのでしょう）。
 
@@ -19,11 +27,12 @@ Xamarin公式の地図ライブラリ [Xamarin.Forms.Maps](https://developer.xam
 
 異なる地図SDKで実現可能な最小限の機能しか持たない Xamarin.Forms.Maps に対して、 **同じ Google Maps で多くの共通機能を実現できるのが Xamarin.Forms.GoogleMaps です。**
 
-### Xamarin.Forms.Maps との比較
+## Xamarin.Forms.Maps との比較
 
 |機能|X.F.Maps|X.F.GoogleMaps|
 | ------------------- | :-----------: | :-----------: |
 |地図の種類|Yes|Yes|
+|渋滞状況地図|-|Yes|
 |地図イベント|-|Yes|
 |地図の移動(アニメーション付き)|Yes|Yes|
 |地図の移動(アニメーション無し)|-|Yes|
@@ -38,12 +47,12 @@ Xamarin公式の地図ライブラリ [Xamarin.Forms.Maps](https://developer.xam
 
 詳しくは、[Xamarin.Forms.Maps との比較](https://github.com/amay077/Xamarin.Forms.GoogleMaps/wiki/Xamarin.Forms.Maps との比較) を見て下さい。
 
-### セットアップ
+## セットアップ
 
 * Available on NuGet: https://www.nuget.org/packages/Xamarin.Forms.GoogleMaps/ [![NuGet](https://img.shields.io/nuget/v/Xam.Plugin.Geolocator.svg?label=NuGet)](https://www.nuget.org/packages/Xamarin.Forms.GoogleMaps/)
 * PCLプロジェクトと各プラットフォームプロジェクトにインストールしてください
 
-### サポートするプラットフォーム
+## サポートするプラットフォーム
 
 |Platform|Supported|
 | ------------------- | :-----------: |
@@ -52,7 +61,7 @@ Xamarin公式の地図ライブラリ [Xamarin.Forms.Maps](https://developer.xam
 |Windows 10 UWP|Yes (Bing map)|
 |その他|No|
 
-### 使い方
+## 使い方
 
 * [Map Control - Xamarin](https://developer.xamarin.com/guides/xamarin-forms/user-interface/map/)
 * [Xamarin.Formsで地図を表示するには？（Xamarin.Forms.Maps使用） - Build Insider](http://www.buildinsider.net/mobile/xamarintips/0039)
@@ -77,6 +86,39 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 }
 ``` 
 
+UWP の場合、 Xamarin.Forms.GoogleMaps.UWP.dll の Assembly を ``Xamarin.Forms.Forms.Init()`` に渡す必要があります。
+
+```csharp
+// App.xaml.cs
+protected override void OnLaunched(LaunchActivatedEventArgs e)
+{
+    Frame rootFrame = Window.Current.Content as Frame;
+
+    if (rootFrame == null)
+    {
+        rootFrame = new Frame();
+        rootFrame.NavigationFailed += OnNavigationFailed;
+
+        // Should add UWP side assembly to rendererAssemblies
+        var rendererAssemblies = new []
+        {
+            typeof(Xamarin.Forms.GoogleMaps.UWP.MapRenderer).GetTypeInfo().Assembly
+        };
+        Xamarin.Forms.Forms.Init(e, rendererAssemblies);
+        
+        Xamarin.FormsGoogleMaps.Init("your_bing_maps_api_key");
+
+        Window.Current.Content = rootFrame;
+    }
+
+    if (rootFrame.Content == null)
+    {
+        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+    }
+    Window.Current.Activate();
+}
+```
+
 既定の名前空間が ``Xamarin.Forms.Maps`` から ``Xamarin.Forms.GoogleMaps`` に変更されています。他のAPIはすべて同じです。
 
 サンプルプログラムが、
@@ -85,7 +127,11 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 
 にあります。
 
-### 今後の予定
+## リリースノーツ
+
+[Releases](https://github.com/amay077/Xamarin.Forms.GoogleMaps/releases) または [RELEASE_NOTES](RELEASE_NOTES.md) を見てください。
+
+## 今後の予定
 
 なるべく Xamarin.Forms.Maps の API に準じ、Google Maps固有の機能のみ API を追加するつもりです。 
 
@@ -100,8 +146,14 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 Windows 10 UWP 対応は「とりあえず」残しました。
 が、基本的には Android/iOS での Google Maps に最適化するので、UWP では未対応の機能が増えると予想されます。  
 
-### ライセンス
+## CONTRIBUTION
 
-[LICENSE](LICENSE) をみて下さい
+私たちは、Xamarin.Forms.GoogleMaps への、あなたの貢献に大変感謝します。
+
+開発に参加して頂ける方は、[コントリビューション ガイドライン](CONTRIBUTING-ja.md) を読んで下さい。
+
+## ライセンス
+
+[LICENSE](LICENSE) をみて下さい。
 
 logo.png by [alecive](http://www.iconarchive.com/show/flatwoken-icons-by-alecive.html) - [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed)

@@ -2,6 +2,8 @@
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 using Foundation;
+using CoreImage;
+
 namespace Xamarin.Forms.GoogleMaps.iOS.Extensions
 {
     internal static class BitmapDescriptorExtensions
@@ -15,7 +17,9 @@ namespace Xamarin.Forms.GoogleMaps.iOS.Extensions
                 case BitmapDescriptorType.Bundle:
                     return UIImage.FromBundle(self.BundleName);
                 case BitmapDescriptorType.Stream:
-                    return UIImage.LoadFromData(NSData.FromStream(self.Stream));
+                    self.Stream.Position = 0;
+                    // Resize to screen scale
+                    return UIImage.LoadFromData(NSData.FromStream(self.Stream), UIScreen.MainScreen.Scale);
                 case BitmapDescriptorType.AbsolutePath:
                     return UIImage.FromFile(self.AbsolutePath);
                 default:

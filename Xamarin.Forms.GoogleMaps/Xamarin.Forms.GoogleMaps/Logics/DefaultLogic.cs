@@ -29,7 +29,8 @@ namespace Xamarin.Forms.GoogleMaps.Logics
             foreach (TOuter outerItem in newItems)
             {
                 outerItem.PropertyChanged += OnItemPropertyChanged;
-                if (CreateNativeItem(outerItem) != null)
+                var nat = CreateNativeItem(outerItem);
+                if (nat != null)
                     _outerItems.Add(outerItem);
             }
         }
@@ -53,7 +54,10 @@ namespace Xamarin.Forms.GoogleMaps.Logics
         protected override void ResetItems()
         {
             foreach (var outerShape in _outerItems)
+            {
+                outerShape.PropertyChanged -= OnItemPropertyChanged;
                 DeleteNativeItem(outerShape);
+            }
 
             _outerItems.Clear();
         }

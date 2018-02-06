@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
+using Xamarin.Forms.GoogleMaps.Internals;
 
 namespace Xamarin.Forms.GoogleMaps
 {
     public struct Distance
     {
-        const double MetersPerMile = 1609.344;
-        const double MetersPerKilometer = 1000.0;
+        const double MetersPerMile = GeoConstants.MetersPerMile;
+        const double MetersPerKilometer = GeoConstants.MetersPerKilometer;
 
         public Distance(double meters)
         {
@@ -75,4 +76,5 @@ namespace Xamarin.Forms.GoogleMaps
             return !left.Equals(right);
         }
     }
+    public enum DistanceType { Kilometers, Meters, Miles }
 }

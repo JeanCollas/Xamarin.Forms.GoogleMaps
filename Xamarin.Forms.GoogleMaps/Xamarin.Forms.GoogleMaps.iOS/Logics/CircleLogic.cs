@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Google.Maps;
-using Xamarin.Forms.GoogleMaps.Extensions.iOS;
+using Xamarin.Forms.GoogleMaps.iOS.Extensions;
 using NativeCircle = Google.Maps.Circle;
 using System.Linq;
 using Xamarin.Forms.Platform.iOS;
@@ -40,7 +40,8 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             nativeCircle.StrokeWidth = outerItem.StrokeWidth;
             nativeCircle.StrokeColor = outerItem.StrokeColor.ToUIColor();
             nativeCircle.FillColor = outerItem.FillColor.ToUIColor();
-            //nativeCircle.Tappable = outerItem.IsClickable;
+            nativeCircle.Tappable = outerItem.IsClickable;
+            nativeCircle.ZIndex = outerItem.ZIndex;
 
             outerItem.NativeObject = nativeCircle;
             nativeCircle.Map = NativeMap;
@@ -75,6 +76,12 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
 
         protected override void OnUpdateRadius(Circle outerItem, NativeCircle nativeItem)
             => nativeItem.Radius = outerItem.Radius.Meters;
+
+        protected override void OnUpdateIsClickable(Circle outerItem, NativeCircle nativeItem)
+            => nativeItem.Tappable = outerItem.IsClickable;
+
+        protected override void OnUpdateZIndex(Circle outerItem, NativeCircle nativeItem)
+            => nativeItem.ZIndex = outerItem.ZIndex;
     }
 }
 

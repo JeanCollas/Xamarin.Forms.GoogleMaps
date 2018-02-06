@@ -4,15 +4,16 @@ using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.GoogleMaps
 {
-    public class Circle : BindableObject
+    public sealed class Circle : BindableObject
     {
-        public static readonly BindableProperty StrokeWidthProperty = BindableProperty.Create("StrokeWidth", typeof(float), typeof(float), 1f);
-        public static readonly BindableProperty StrokeColorProperty = BindableProperty.Create("StrokeColor", typeof(Color), typeof(Color), Color.Blue);
-        public static readonly BindableProperty FillColorProperty = BindableProperty.Create("FillColor", typeof(Color), typeof(Color), Color.Blue);
-        //public static readonly BindableProperty IsClickableProperty = BindableProperty.Create("IsClickable", typeof(bool), typeof(bool), false);
+        public static readonly BindableProperty StrokeWidthProperty = BindableProperty.Create(nameof(StrokeWidth) , typeof(float), typeof(Circle), 1f);
+        public static readonly BindableProperty StrokeColorProperty = BindableProperty.Create(nameof(StrokeColor), typeof(Color), typeof(Circle), Color.Blue);
+        public static readonly BindableProperty FillColorProperty = BindableProperty.Create(nameof(FillColor), typeof(Color), typeof(Circle), Color.Blue);
+        public static readonly BindableProperty IsClickableProperty = BindableProperty.Create("IsClickable", typeof(bool), typeof(Circle), false);
 
-        public static readonly BindableProperty CenterProperty = BindableProperty.Create("Center", typeof(Position), typeof(Position), default(Position));
-        public static readonly BindableProperty RadiusProperty = BindableProperty.Create("Radius", typeof(Distance), typeof(Distance), Distance.FromMeters(1));
+        public static readonly BindableProperty CenterProperty = BindableProperty.Create(nameof(Center), typeof(Position), typeof(Circle), default(Position));
+        public static readonly BindableProperty RadiusProperty = BindableProperty.Create(nameof(Radius), typeof(Distance), typeof(Circle), Distance.FromMeters(1));
+        public static readonly BindableProperty ZIndexProperty = BindableProperty.Create(nameof(ZIndex), typeof(int), typeof(Circle), 0);
 
         public float StrokeWidth
         {
@@ -32,11 +33,11 @@ namespace Xamarin.Forms.GoogleMaps
             set { SetValue(FillColorProperty, value); }
         }
 
-        //public bool IsClickable
-        //{
-        //    get { return (bool)GetValue(IsClickableProperty); }
-        //    set { SetValue(IsClickableProperty, value); }
-        //}
+        public bool IsClickable
+        {
+            get { return (bool)GetValue(IsClickableProperty); }
+            set { SetValue(IsClickableProperty, value); }
+        }
 
         public Position Center
         {
@@ -50,11 +51,17 @@ namespace Xamarin.Forms.GoogleMaps
             set { SetValue(RadiusProperty, value); }
         }
 
+        public int ZIndex
+        {
+            get { return (int)GetValue(ZIndexProperty); }
+            set { SetValue(ZIndexProperty, value); }
+        }
+
         public object Tag { get; set; }
 
         public object NativeObject { get; internal set; }
 
-        //public event EventHandler Clicked;
+        public event EventHandler Clicked;
 
         public Circle()
         {
@@ -62,13 +69,12 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal bool SendTap()
         {
-            //EventHandler handler = Clicked;
-            //if (handler == null)
-            //    return false;
+            EventHandler handler = Clicked;
+            if (handler == null)
+                return false;
 
-            //handler(this, EventArgs.Empty);
-            //return true;
-            return false;
+            handler(this, EventArgs.Empty);
+            return true;
         }
     }
 }

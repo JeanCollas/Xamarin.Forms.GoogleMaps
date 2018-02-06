@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
@@ -42,6 +43,16 @@ namespace XFGoogleMapSample
             Label = "Tokyo SKYTREE",
             Address = "Sumida-ku, Tokyo, Japan",
             Position = new Position(35.71d, 139.81d)
+        };
+
+        // The second pin
+        readonly Pin _pinTokyo2 = new Pin()
+        {
+            Icon = BitmapDescriptorFactory.DefaultMarker(Color.Gray),
+            Type = PinType.Place,
+            Label = "Second Pin",
+            Position = new Position(35.71d, 139.815d),
+            ZIndex = 5
         };
 
         public CustomPinsPage()
@@ -122,10 +133,59 @@ namespace XFGoogleMapSample
                 _pinTokyo.IsDraggable = switchIsDraggable.IsToggled;
             };
 
+            switchFlat.Toggled += (sender, e) =>
+            {
+                _pinTokyo.Flat = switchFlat.IsToggled;
+            };
+
             // Pin Rotation
             sliderRotation.ValueChanged += (sender, e) =>
             {
                 _pinTokyo.Rotation = (float)e.NewValue;
+
+                if (_pinTokyo.Rotation>= 0 && _pinTokyo.Rotation <= 60)
+                {
+                    _pinTokyo.InfoWindowAnchor = new Point(0.5, 0.0);
+                }
+
+                if (_pinTokyo.Rotation > 60 && _pinTokyo.Rotation <= 120)
+                {
+                    _pinTokyo.InfoWindowAnchor = new Point(0.0, 0.5);
+                }
+
+                if (_pinTokyo.Rotation > 120 && _pinTokyo.Rotation <= 210)
+                {
+                    _pinTokyo.InfoWindowAnchor = new Point(0.5, 1.0);
+                }
+
+                if (_pinTokyo.Rotation > 210 && _pinTokyo.Rotation < 270)
+                {
+                    _pinTokyo.InfoWindowAnchor = new Point(1.0, 0.25);
+                }
+
+                if (_pinTokyo.Rotation > 270 && _pinTokyo.Rotation < 360)
+                {
+                    _pinTokyo.InfoWindowAnchor = new Point(0.5, 0.0);
+                }
+            };
+
+            // Pin Transparency
+            sliderTransparency.ValueChanged += (sender, e) => 
+            {
+                _pinTokyo.Transparency = (float)(e.NewValue / 10f);
+            };
+            _pinTokyo.Transparency = (float)(sliderTransparency.Value / 10f);
+
+            // ZIndex
+            buttonMoveToFront.Clicked += (sender, e) =>
+            {
+                map.SelectedPin = null;
+                _pinTokyo.ZIndex = _pinTokyo2.ZIndex + 1;
+            };
+            buttonMoveToBack.Clicked += (sender, e) =>
+            {
+                map.SelectedPin = null;
+                _pinTokyo.ZIndex = _pinTokyo2.ZIndex - 1;
             };
 
             map.PinDragStart += (_, e) => labelDragStatus.Text = $"DragStart - {PrintPin(e.Pin)}";
@@ -138,6 +198,7 @@ namespace XFGoogleMapSample
 
             _pinTokyo.IsDraggable = true;
             map.Pins.Add(_pinTokyo);
+            map.Pins.Add(_pinTokyo2);
             map.SelectedPin = _pinTokyo;
             map.MoveToRegion(MapSpan.FromCenterAndRadius(_pinTokyo.Position, Distance.FromMeters(5000)), true);
         }

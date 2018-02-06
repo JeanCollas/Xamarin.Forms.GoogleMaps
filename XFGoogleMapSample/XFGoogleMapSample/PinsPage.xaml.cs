@@ -25,7 +25,8 @@ namespace XFGoogleMapSample
                     Address = "Sumida-ku, Tokyo, Japan",
                     Position = new Position(35.71d, 139.81d),
                     Rotation = 33.3f,
-                    Tag = "id_tokyo"
+                    Tag = "id_tokyo",
+                    IsVisible = switchIsVisibleTokyo.IsToggled
                 };
 
                 map.Pins.Add(pinTokyo);
@@ -109,12 +110,43 @@ namespace XFGoogleMapSample
                 map.SelectedPin = null;
             };
 
+
+            // Visible/Invisible Pin tokyo
+            switchIsVisibleTokyo.Toggled += (sender, args) =>
+            {
+                if (pinTokyo != null)
+                {
+                     pinTokyo.IsVisible = args.Value;
+                }
+            };
+
+            // AnchorX Pin new york
+            sliderAnchorXNewyork.ValueChanged += (sender, args) =>
+            {
+                pinNewYork.Anchor = new Point(args.NewValue / 100d, pinNewYork.Anchor.Y);
+            };
+
+            // AnchorY Pin new york
+            sliderAnchorYNewyork.ValueChanged += (sender, args) =>
+            {
+                pinNewYork.Anchor = new Point(pinNewYork.Anchor.X, args.NewValue / 100d);
+            };
+
             map.PinClicked += Map_PinClicked;;
 
             // Selected Pin changed
             map.SelectedPinChanged += SelectedPin_Changed;
 
             map.InfoWindowClicked += InfoWindow_Clicked;
+
+            map.InfoWindowLongClicked += InfoWindow_LongClicked;
+        }
+
+        private void InfoWindow_LongClicked(object sender, InfoWindowLongClickedEventArgs e)
+        {
+           
+            var time = DateTime.Now.ToString("hh:mm:ss");
+            labelStatus.Text = $"[{time}]InfoWindow Long Clicked - {e?.Pin?.Tag.ToString() ?? "nothing"}";
         }
 
         private void InfoWindow_Clicked(object sender, InfoWindowClickedEventArgs e)

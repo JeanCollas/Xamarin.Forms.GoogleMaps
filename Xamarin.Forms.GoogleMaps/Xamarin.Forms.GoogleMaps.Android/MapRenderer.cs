@@ -1,36 +1,44 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.OS;
 using Java.Lang;
 using Xamarin.Forms.Platform.Android;
 using Math = System.Math;
-using Android.Util;
 using Android.App;
-using Xamarin.Forms.GoogleMaps.Internals;
+using Android.Graphics;
 using Xamarin.Forms.GoogleMaps.Logics.Android;
 using Xamarin.Forms.GoogleMaps.Logics;
 using Xamarin.Forms.GoogleMaps.Android.Extensions;
+using Android.Widget;
+using Android.Views;
+using Xamarin.Forms.GoogleMaps.Android.Logics;
+using Xamarin.Forms.GoogleMaps.Internals;
 
 namespace Xamarin.Forms.GoogleMaps.Android
 {
-    public class MapRenderer : ViewRenderer,
-        GoogleMap.IOnCameraChangeListener,
+    public class MapRenderer : ViewRenderer<Map, global::Android.Views.View>,
         GoogleMap.IOnMapClickListener,
-        GoogleMap.IOnMapLongClickListener
+        GoogleMap.IOnMapLongClickListener,
+        GoogleMap.IOnMyLocationButtonClickListener
     {
+        readonly CameraLogic _cameraLogic;
+        readonly UiSettingsLogic _uiSettingsLogic = new UiSettingsLogic();
         readonly BaseLogic<GoogleMap>[] _logics;
 
         public MapRenderer() : base()
         {
+            _cameraLogic = new CameraLogic(UpdateVisibleRegion);
+
             AutoPackage = false;
             _logics = new BaseLogic<GoogleMap>[]
             {
                 new PolylineLogic(),
                 new PolygonLogic(),
                 new CircleLogic(),
-                new PinLogic(),
+                new PinLogic(OnMarkerCreating, OnMarkerCreated, OnMarkerDeleting, OnMarkerDeleted),
                 new TileLayerLogic(),
                 new GroundOverlayLogic()
             };
@@ -41,28 +49,67 @@ namespace Xamarin.Forms.GoogleMaps.Android
         static Bundle s_bundle;
         internal static Bundle Bundle { set { s_bundle = value; } }
 
-        const string MoveMessageName = "MapMoveToRegion";
-
         protected GoogleMap NativeMap { get; private set; }
 
-        protected Map Map => (Map)Element;
+        protected Map Map => Element;
 
-        private GoogleMap _oldNativeMap;
-        private Map _oldMap;
+        private bool _ready = false;
+        private bool _onLayout = false;
 
-        bool _ready = false;
-        bool _onLayout = false;
+        private float _scaledDensity;
 
         public override SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
         {
             return new SizeRequest(new Size(Context.ToPixels(40), Context.ToPixels(40)));
         }
 
-        protected async override void OnElementChanged(ElementChangedEventArgs<View> e)
+        protected override async void OnElementChanged(ElementChangedEventArgs<Map> e)
         {
             base.OnElementChanged(e);
 
-            var oldMapView = (MapView)Control;
+            if (e.OldElement == e.NewElement)
+            {
+                return;
+            }
+
+            // For XAML Previewer or FormsGoogleMaps.Init not called.
+            if (!FormsGoogleMaps.IsInitialized)
+            {
+                var tv = new TextView(Context)
+                {
+                    Gravity = GravityFlags.Center,
+                    Text = "Xamarin.Forms.GoogleMaps"
+                };
+                tv.SetBackgroundColor(Color.Teal.ToAndroid());
+                tv.SetTextColor(Color.Black.ToAndroid());
+                SetNativeControl(tv);
+                return;
+            }
+
+            // Uninitialize old view
+            GoogleMap oldNativeMap = null;
+            Map oldMap = null;
+            if (e.OldElement != null)
+            {
+                try
+                {
+                    var oldNativeView = Control as MapView;
+                    oldNativeMap = await oldNativeView?.GetGoogleMapAsync();
+                    oldMap = e.OldElement;
+                    Uninitialize(oldNativeMap, oldMap);
+                    oldNativeView?.Dispose();
+                } 
+                catch (System.Exception ex) 
+                {
+                    var message = ex.Message;
+                    System.Diagnostics.Debug.WriteLine($"Uninitialize old view failed. - {message}");
+                }
+            }
+
+            if (e.NewElement == null)
+            {
+                return;
+            }
 
             var mapView = new MapView(Context);
             mapView.OnCreate(s_bundle);
@@ -72,60 +119,62 @@ namespace Xamarin.Forms.GoogleMaps.Android
             var activity = Context as Activity;
             if (activity != null)
             {
-                var metrics = new DisplayMetrics();
-                activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
+                _scaledDensity = activity.GetScaledDensity();
+                _cameraLogic.ScaledDensity = _scaledDensity;
                 foreach (var logic in _logics)
-                    logic.ScaledDensity = metrics.ScaledDensity;
-            }
-
-            if (e.OldElement != null)
-            {
-                var oldMapModel = (Map)e.OldElement;
-                MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, MoveMessageName);
-
-                var oldGoogleMap = await oldMapView.GetGoogleMapAsync();
-                if (oldGoogleMap != null)
                 {
-
-                    oldGoogleMap.SetOnCameraChangeListener(null);
-                    oldGoogleMap.SetOnMapClickListener(null);
-                    oldGoogleMap.SetOnMapLongClickListener(null);
+                    logic.ScaledDensity = _scaledDensity;
                 }
-
-                oldMapView.Dispose();
             }
 
-            if (oldMapView != null)
-            {
-                _oldNativeMap = await oldMapView.GetGoogleMapAsync();
-                _oldMap = (Map)e.OldElement;
-            }
-
-            MessagingCenter.Subscribe<Map, MoveToRegionMessage>(this, MoveMessageName, OnMoveToRegionMessage, Map);
-
-            NativeMap = await ((MapView)Control).GetGoogleMapAsync();
-            OnMapReady(NativeMap);
-        }
-
-        void OnMapReady(GoogleMap map)
-        {
-            if (map != null)
-            {
-                map.SetOnCameraChangeListener(this);
-                map.SetOnMapClickListener(this);
-                map.SetOnMapLongClickListener(this);
-                map.UiSettings.MapToolbarEnabled = false;
-                map.UiSettings.ZoomControlsEnabled = Map.HasZoomEnabled;
-                map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled;
-                map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
-                map.MyLocationEnabled = map.UiSettings.MyLocationButtonEnabled = Map.IsShowingUser;
-                map.TrafficEnabled = Map.IsTrafficEnabled;
-                SetMapType();
-            }
+            var newMap = e.NewElement;
+            NativeMap = await mapView.GetGoogleMapAsync();
 
             foreach (var logic in _logics)
             {
-                logic.Register(_oldNativeMap, _oldMap, NativeMap, Map);
+                logic.Register(oldNativeMap, oldMap, NativeMap, newMap);
+                logic.ScaledDensity = _scaledDensity;
+            }
+
+            OnMapReady(NativeMap, newMap);
+        }
+
+        private void OnSnapshot(TakeSnapshotMessage snapshotMessage)
+        {
+            NativeMap.Snapshot(new DelegateSnapshotReadyCallback(snapshot =>
+            {
+                var stream = new MemoryStream();
+                snapshot.Compress(Bitmap.CompressFormat.Png, 0, stream);
+                stream.Position = 0;
+                snapshotMessage?.OnSnapshot?.Invoke(stream);
+            }));
+        }
+
+        private void OnMapReady(GoogleMap nativeMap, Map map)
+        {
+            if (nativeMap != null)
+            {
+                _cameraLogic.Register(map, nativeMap);
+
+                _uiSettingsLogic.Register(map, nativeMap);
+                Map.OnSnapshot += OnSnapshot;
+
+                nativeMap.SetOnMapClickListener(this);
+                nativeMap.SetOnMapLongClickListener(this);
+                nativeMap.SetOnMyLocationButtonClickListener(this);
+
+                UpdateIsShowingUser(_uiSettingsLogic.MyLocationButtonEnabled);
+                UpdateHasScrollEnabled(_uiSettingsLogic.ScrollGesturesEnabled);
+                UpdateHasZoomEnabled(_uiSettingsLogic.ZoomControlsEnabled, _uiSettingsLogic.ZoomGesturesEnabled);
+                UpdateHasRotationEnabled(_uiSettingsLogic.RotateGesturesEnabled);
+                UpdateIsTrafficEnabled();
+                UpdateIndoorEnabled();
+                UpdateMapStyle();
+                UpdateMyLocationEnabled();
+                _uiSettingsLogic.Initialize();
+
+                SetMapType();
+                SetPadding();
             }
 
             _ready = true;
@@ -135,38 +184,15 @@ namespace Xamarin.Forms.GoogleMaps.Android
             }
         }
 
-        void OnMoveToRegionMessage(Map s, MoveToRegionMessage m)
-        {
-            MoveToRegion(m.Span, m.Animate);
-        }
-
-        void MoveToRegion(MapSpan span, bool animate)
-        {
-            var map = NativeMap;
-            if (map == null)
-                return;
-
-            span = span.ClampLatitude(85, -85);
-            var ne = new LatLng(span.Center.Latitude + span.LatitudeDegrees / 2, span.Center.Longitude + span.LongitudeDegrees / 2);
-            var sw = new LatLng(span.Center.Latitude - span.LatitudeDegrees / 2, span.Center.Longitude - span.LongitudeDegrees / 2);
-            var update = CameraUpdateFactory.NewLatLngBounds(new LatLngBounds(sw, ne), 0);
-
-            try
-            {
-                if (animate)
-                    map.AnimateCamera(update);
-                else
-                    map.MoveCamera(update);
-            }
-            catch (IllegalStateException exc)
-            {
-                System.Diagnostics.Debug.WriteLine("MoveToRegion exception: " + exc);
-            }
-        }
-
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
         {
             base.OnLayout(changed, l, t, r, b);
+
+            // For XAML Previewer or FormsGoogleMaps.Init not called.
+            if (!FormsGoogleMaps.IsInitialized)
+            {
+                return;
+            }
 
             _onLayout = true;
 
@@ -177,12 +203,13 @@ namespace Xamarin.Forms.GoogleMaps.Android
             else if (changed && NativeMap != null)
             {
                 UpdateVisibleRegion(NativeMap.CameraPosition.Target);
+                _cameraLogic.MoveCamera(Map.InitialCameraUpdate);
             }
         }
 
         void InitializeLogic()
         {
-            MoveToRegion(((Map)Element).LastMoveToRegion, false);
+            _cameraLogic.MoveCamera(Map.InitialCameraUpdate);
 
             foreach (var logic in _logics)
             {
@@ -201,31 +228,112 @@ namespace Xamarin.Forms.GoogleMaps.Android
         {
             base.OnElementPropertyChanged(sender, e);
 
+            // For XAML Previewer or FormsGoogleMaps.Init not called.
+            if (!FormsGoogleMaps.IsInitialized)
+            {
+                return;
+            }
+
             if (e.PropertyName == Map.MapTypeProperty.PropertyName)
             {
                 SetMapType();
                 return;
             }
 
-            if (NativeMap == null)
+            if (e.PropertyName == Map.PaddingProperty.PropertyName)
+            {
+                SetPadding();
                 return;
+            }
+
+            if (NativeMap == null)
+            {
+                return;
+            }
 
             if (e.PropertyName == Map.IsShowingUserProperty.PropertyName)
-                NativeMap.MyLocationEnabled = NativeMap.UiSettings.MyLocationButtonEnabled = Map.IsShowingUser;
+            {
+                UpdateIsShowingUser();
+            }
+            else if (e.PropertyName == Map.MyLocationEnabledProperty.PropertyName)
+            {
+                UpdateMyLocationEnabled();
+            }
             else if (e.PropertyName == Map.HasScrollEnabledProperty.PropertyName)
-                NativeMap.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
+            {
+                UpdateHasScrollEnabled();
+            }
             else if (e.PropertyName == Map.HasZoomEnabledProperty.PropertyName)
             {
-                NativeMap.UiSettings.ZoomControlsEnabled = Map.HasZoomEnabled;
-                NativeMap.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled;
+                UpdateHasZoomEnabled();
+            }
+            else if (e.PropertyName == Map.HasRotationEnabledProperty.PropertyName)
+            {
+                UpdateHasRotationEnabled();
             }
             else if (e.PropertyName == Map.IsTrafficEnabledProperty.PropertyName)
             {
-                NativeMap.TrafficEnabled = Map.IsTrafficEnabled;
+                UpdateIsTrafficEnabled();
+            }
+            else if (e.PropertyName == Map.IndoorEnabledProperty.PropertyName)
+            {
+                UpdateIndoorEnabled();
+            }
+            else if (e.PropertyName == Map.MapStyleProperty.PropertyName)
+            {
+                UpdateMapStyle();
             }
 
             foreach (var logic in _logics)
+            {
                 logic.OnMapPropertyChanged(e);
+            }
+        }
+
+        private void UpdateIsShowingUser(bool? initialMyLocationButtonEnabled = null)
+        {
+            NativeMap.MyLocationEnabled = Map.IsShowingUser;
+            NativeMap.UiSettings.MyLocationButtonEnabled = initialMyLocationButtonEnabled ?? Map.IsShowingUser;
+        }
+
+        private void UpdateMyLocationEnabled()
+        {
+            NativeMap.MyLocationEnabled = Map.MyLocationEnabled;
+        }
+
+        private void UpdateHasScrollEnabled(bool? initialScrollGesturesEnabled = null)
+        {
+            NativeMap.UiSettings.ScrollGesturesEnabled = initialScrollGesturesEnabled ?? Map.HasScrollEnabled;
+        }
+
+        private void UpdateHasZoomEnabled(
+            bool? initialZoomControlsEnabled = null, 
+            bool? initialZoomGesturesEnabled = null)
+        {
+            NativeMap.UiSettings.ZoomControlsEnabled = initialZoomControlsEnabled ?? Map.HasZoomEnabled;
+            NativeMap.UiSettings.ZoomGesturesEnabled = initialZoomGesturesEnabled ?? Map.HasZoomEnabled;
+        }
+
+        private void UpdateHasRotationEnabled(bool? initialRotateGesturesEnabled = null)
+        {
+            NativeMap.UiSettings.RotateGesturesEnabled = initialRotateGesturesEnabled ?? Map.HasRotationEnabled;
+        }
+
+        private void UpdateIsTrafficEnabled()
+        {
+            NativeMap.TrafficEnabled = Map.IsTrafficEnabled;
+        }
+
+        private void UpdateIndoorEnabled()
+        {
+            NativeMap.SetIndoorEnabled(Map.IsIndoorEnabled);
+        }
+
+        private void UpdateMapStyle()
+        {
+            NativeMap.SetMapStyle(Map.MapStyle != null ?
+                new MapStyleOptions(Map.MapStyle.JsonStyle) : 
+                null);
         }
 
         void SetMapType()
@@ -245,6 +353,9 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 case MapType.Hybrid:
                     map.MapType = GoogleMap.MapTypeHybrid;
                     break;
+                case MapType.Terrain:
+                    map.MapType = GoogleMap.MapTypeTerrain;
+                    break;
                 case MapType.None:
                     map.MapType = GoogleMap.MapTypeNone;
                     break;
@@ -253,9 +364,13 @@ namespace Xamarin.Forms.GoogleMaps.Android
             }
         }
 
-        public void OnCameraChange(CameraPosition pos)
+        void SetPadding()
         {
-            UpdateVisibleRegion(pos.Target);
+            NativeMap?.SetPadding(
+                (int)(Map.Padding.Left * _scaledDensity), 
+                (int)(Map.Padding.Top * _scaledDensity), 
+                (int)(Map.Padding.Right * _scaledDensity),
+                (int)(Map.Padding.Bottom * _scaledDensity));
         }
 
         public void OnMapClick(LatLng point)
@@ -266,6 +381,11 @@ namespace Xamarin.Forms.GoogleMaps.Android
         public void OnMapLongClick(LatLng point)
         {
             Map.SendMapLongClicked(point.ToPosition());
+        }
+
+        public bool OnMyLocationButtonClick()
+        {
+            return Map.SendMyLocationClicked();
         }
 
         void UpdateVisibleRegion(LatLng pos)
@@ -292,26 +412,97 @@ namespace Xamarin.Forms.GoogleMaps.Android
             );
         }
 
+        #region Overridable Members
+
+        /// <summary>
+        /// Call when before marker create.
+        /// You can override your custom renderer for customize marker.
+        /// </summary>
+        /// <param name="outerItem">the pin.</param>
+        /// <param name="innerItem">the marker options.</param>
+        protected virtual void OnMarkerCreating(Pin outerItem, MarkerOptions innerItem)
+        {
+        }
+
+        /// <summary>
+        /// Call when after marker create.
+        /// You can override your custom renderer for customize marker.
+        /// </summary>
+        /// <param name="outerItem">the pin.</param>
+        /// <param name="innerItem">thr marker.</param>
+        protected virtual void OnMarkerCreated(Pin outerItem, Marker innerItem)
+        {
+        }
+
+        /// <summary>
+        /// Call when before marker delete.
+        /// You can override your custom renderer for customize marker.
+        /// </summary>
+        /// <param name="outerItem">the pin.</param>
+        /// <param name="innerItem">thr marker.</param>
+        protected virtual void OnMarkerDeleting(Pin outerItem, Marker innerItem)
+        {
+        }
+
+        /// <summary>
+        /// Call when after marker delete.
+        /// You can override your custom renderer for customize marker.
+        /// </summary>
+        /// <param name="outerItem">the pin.</param>
+        /// <param name="innerItem">thr marker.</param>
+        protected virtual void OnMarkerDeleted(Pin outerItem, Marker innerItem)
+        {
+        }
+
+        #endregion
+
+        private void Uninitialize(GoogleMap nativeMap, Map map) 
+        {
+            try
+            {
+                if (nativeMap == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Uninitialize failed - {nameof(nativeMap)} is null");
+                    return;
+                }
+
+                if (map == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Uninitialize failed - {nameof(map)} is null");
+                    return;
+                }
+
+                _uiSettingsLogic.Unregister();
+
+                map.OnSnapshot -= OnSnapshot;
+                _cameraLogic.Unregister();
+
+                foreach (var logic in _logics)
+                {
+                    logic.Unregister(nativeMap, map);
+                }
+
+                nativeMap.SetOnMapClickListener(null);
+                nativeMap.SetOnMapLongClickListener(null);
+                nativeMap.SetOnMyLocationButtonClickListener(null);
+
+                nativeMap.MyLocationEnabled = false;
+                nativeMap.Dispose();
+            }
+            catch (System.Exception ex)
+            {
+                var message = ex.Message;
+                System.Diagnostics.Debug.WriteLine($"Uninitialize failed. - {message}");
+            }
+        }
+
         bool _disposed;
         protected override void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
             {
                 _disposed = true;
-
-                if (this.Map != null)
-                {
-                    MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, MoveMessageName);
-                }
-
-                foreach (var logic in _logics)
-                    logic.Unregister(NativeMap, Map);
-
-                if (NativeMap != null)
-                {
-                    NativeMap.MyLocationEnabled = false;
-                    NativeMap.Dispose();
-                }
+                Uninitialize(NativeMap, Map);
             }
 
             base.Dispose(disposing);

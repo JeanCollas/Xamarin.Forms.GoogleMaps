@@ -27,27 +27,12 @@ namespace XFGoogleMapSample
             };
             pickerMapType.SelectedIndex = 0;
 
-
-            // ZoomEnabled
-            switchHasZoomEnabled.Toggled += (sender, e) =>
+            // MyLocationEnabled
+            switchMyLocationEnabled.Toggled += (sender, e) =>
             {
-                map.HasZoomEnabled = e.Value;
+                map.MyLocationEnabled = e.Value;
             };
-            switchHasZoomEnabled.IsToggled = map.HasZoomEnabled;
-
-            // ScrollEnabled
-            switchHasScrollEnabled.Toggled += (sender, e) =>
-            {
-                map.HasScrollEnabled = e.Value;
-            };
-            switchHasScrollEnabled.IsToggled = map.HasScrollEnabled;
-
-            // IsShowingUser
-            switchIsShowingUser.Toggled += (sender, e) =>
-            {
-                map.IsShowingUser = e.Value;
-            };
-            switchIsShowingUser.IsToggled = map.IsShowingUser;
+            switchMyLocationEnabled.IsToggled = map.MyLocationEnabled;
 
             // IsTrafficEnabled
             switchIsTrafficEnabled.Toggled += (sender, e) =>
@@ -55,6 +40,69 @@ namespace XFGoogleMapSample
                 map.IsTrafficEnabled = e.Value;
             };
             switchIsTrafficEnabled.IsToggled = map.IsTrafficEnabled;
+
+            // IndoorEnabled
+            switchIndoorEnabled.Toggled += (sender, e) =>
+            {
+                map.IsIndoorEnabled = e.Value;
+            };
+            switchIndoorEnabled.IsToggled = map.IsIndoorEnabled;
+
+            // CompassEnabled
+            switchCompassEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.CompassEnabled = e.Value;
+            };
+            switchCompassEnabled.IsToggled = map.UiSettings.CompassEnabled;
+
+            // RotateGesturesEnabled
+            switchRotateGesturesEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.RotateGesturesEnabled = e.Value;
+            };
+            switchRotateGesturesEnabled.IsToggled = map.UiSettings.RotateGesturesEnabled;
+
+            // MyLocationButtonEnabled
+            switchMyLocationButtonEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.MyLocationButtonEnabled = e.Value;
+            };
+            switchMyLocationButtonEnabled.IsToggled = map.UiSettings.MyLocationButtonEnabled;
+
+            // IndoorLevelPickerEnabled
+            switchIndoorLevelPickerEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.IndoorLevelPickerEnabled = e.Value;
+            };
+            switchIndoorLevelPickerEnabled.IsToggled = map.UiSettings.IndoorLevelPickerEnabled;
+
+            // ScrollGesturesEnabled
+            switchScrollGesturesEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.ScrollGesturesEnabled = e.Value;
+            };
+            switchScrollGesturesEnabled.IsToggled = map.UiSettings.ScrollGesturesEnabled;
+
+            // TiltGesturesEnabled
+            switchTiltGesturesEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.TiltGesturesEnabled = e.Value;
+            };
+            switchTiltGesturesEnabled.IsToggled = map.UiSettings.TiltGesturesEnabled;
+
+            // ZoomControlsEnabled
+            switchZoomControlsEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.ZoomControlsEnabled = e.Value;
+            };
+            switchZoomControlsEnabled.IsToggled = map.UiSettings.ZoomControlsEnabled;
+
+            // ZoomGesturesEnabled
+            switchZoomGesturesEnabled.Toggled += (sender, e) =>
+            {
+                map.UiSettings.ZoomGesturesEnabled = e.Value;
+            };
+            switchZoomGesturesEnabled.IsToggled = map.UiSettings.ZoomGesturesEnabled;
 
             // Map Clicked
             map.MapClicked += (sender, e) =>
@@ -70,6 +118,25 @@ namespace XFGoogleMapSample
                 var lat = e.Point.Latitude.ToString("0.000");
                 var lng = e.Point.Longitude.ToString("0.000");
                 this.DisplayAlert("MapLongClicked", $"{lat}/{lng}", "CLOSE");
+            };
+
+            // Map MyLocationButton clicked
+            map.MyLocationButtonClicked += (sender, args) =>
+            {
+                args.Handled = switchHandleMyLocationButton.IsToggled;
+                if (switchHandleMyLocationButton.IsToggled)
+                {
+                    this.DisplayAlert("MyLocationButtonClicked", 
+                                 "If set MyLocationButtonClickedEventArgs.Handled = true then skip obtain current location", 
+                                 "OK");
+                }
+
+            };
+
+            map.CameraChanged += (sender, args) =>
+            {
+                var p = args.Position;
+                labelStatus.Text = $"Lat={p.Target.Latitude:0.00}, Long={p.Target.Longitude:0.00}, Zoom={p.Zoom:0.00}, Bearing={p.Bearing:0.00}, Tilt={p.Tilt:0.00}";
             };
 
             // Geocode
@@ -89,6 +156,13 @@ namespace XFGoogleMapSample
                 {
                     await this.DisplayAlert("Not found", "Geocoder returns no results", "Close");
                 }
+            };
+
+            // Snapshot
+            buttonTakeSnapshot.Clicked += async (sender, e) =>
+            {
+                var stream = await map.TakeSnapshot();
+                imageSnapshot.Source = ImageSource.FromStream(() => stream);
             };
         }
     }
