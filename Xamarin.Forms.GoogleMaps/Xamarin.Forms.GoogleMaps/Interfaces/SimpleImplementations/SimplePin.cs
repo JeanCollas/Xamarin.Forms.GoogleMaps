@@ -22,6 +22,10 @@ namespace Xamarin.Forms.GoogleMaps.Interfaces.SimpleImplementations
         private Position _PinPosition;
         public Position PinPosition { get { return _PinPosition; } set { bool changed = _PinPosition != value; if (changed) { OnPropertyChanging(); _PinPosition = value; OnPropertyChanged(); } } }
 
+        private int _ZIndex;
+        public int ZIndex { get { return _ZIndex; } set { bool changed = _ZIndex != value; if (changed) { OnPropertyChanging(); _ZIndex = value; OnPropertyChanged(); } } }
+
+
         //custom info
         private string _PinAdress;
         public string PinAdress { get { return _PinAdress; } set { bool changed = _PinAdress != value; if (changed) { OnPropertyChanging(); _PinAdress = value; OnPropertyChanged(); } } }

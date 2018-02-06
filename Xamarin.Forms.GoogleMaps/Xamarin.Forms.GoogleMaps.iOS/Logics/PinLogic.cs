@@ -55,6 +55,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             nativeMarker.Snippet = outerItem.Address ?? string.Empty;
             nativeMarker.Draggable = outerItem.IsDraggable;
             nativeMarker.Rotation = outerItem.Rotation;
+            nativeMarker.ZIndex = outerItem.ZIndex;
             switch (outerItem.AppearAnimation)
             {
                 case AppearMarkerAnimation.None:
@@ -273,6 +274,11 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
         protected override void OnUpdateRotation(Pin outerItem, Marker nativeItem)
         {
             nativeItem.Rotation = outerItem?.Rotation ?? 0f;
+        }
+
+        protected override void OnUpdateZIndex(Pin outerItem, Marker nativeItem)
+        {
+            nativeItem.ZIndex = outerItem.ZIndex;
         }
     }
 }

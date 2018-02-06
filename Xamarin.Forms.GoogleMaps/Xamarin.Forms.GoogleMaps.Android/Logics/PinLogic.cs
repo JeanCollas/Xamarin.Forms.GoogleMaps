@@ -332,6 +332,11 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
         {
             nativeItem.Rotation = outerItem?.Rotation ?? 0f;
         }
+
+        protected override void OnUpdateZIndex(Pin outerItem, Marker nativeItem)
+        {
+            nativeItem.ZIndex = outerItem.ZIndex;
+        }
     }
 }
 

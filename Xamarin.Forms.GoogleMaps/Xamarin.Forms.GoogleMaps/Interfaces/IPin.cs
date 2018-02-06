@@ -16,6 +16,8 @@ namespace Xamarin.Forms.GoogleMaps
         string PinAdress { get; }
         string PinDate { get; }
 
+        int ZIndex { get; set; }
+
         /// <summary>
         /// PinPosition needs a setter to be bindable
         /// </summary>
@@ -82,6 +84,7 @@ namespace Xamarin.Forms.GoogleMaps
             pin.SetBinding(Pin.IsDraggableProperty, nameof(IPin.PinIsDraggable));
             pin.SetBinding(Pin.PositionProperty, nameof(IPin.PinPosition));
             pin.SetBinding(Pin.RotationProperty, nameof(IPin.PinRotation));
+            pin.SetBinding(Pin.ZIndexProperty, nameof(IPin.ZIndex));
 
             //custom info
             pin.FullAddress = iPin.PinAdress;

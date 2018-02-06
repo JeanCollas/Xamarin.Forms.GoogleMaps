@@ -16,6 +16,8 @@ namespace Xamarin.Forms.GoogleMaps
 
         public static readonly BindableProperty IsDraggableProperty = BindableProperty.Create("IsDraggable", typeof(bool), typeof(Pin), false);
 
+        public static readonly BindableProperty ZIndexProperty = BindableProperty.Create(nameof(ZIndex), typeof(PinType), typeof(Pin), default(PinType));
+
         public static readonly BindableProperty RotationProperty = BindableProperty.Create("Rotation", typeof(float), typeof(Pin), 0f);
 
         public static readonly BindableProperty AppearAnimationProperty = BindableProperty.Create(nameof(AppearAnimation), typeof(AppearMarkerAnimation), typeof(Pin), default(AppearMarkerAnimation));
@@ -30,6 +32,12 @@ namespace Xamarin.Forms.GoogleMaps
         {
             get { return (string)GetValue(AddressProperty); }
             set { SetValue(AddressProperty, value); }
+        }
+
+        public int ZIndex
+        {
+            get { return (int)GetValue(ZIndexProperty); }
+            set { SetValue(ZIndexProperty, value); }
         }
 
         public Position Position
