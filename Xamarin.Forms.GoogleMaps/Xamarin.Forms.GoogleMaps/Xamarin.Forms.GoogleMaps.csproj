@@ -33,25 +33,26 @@
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Circle.cs" />
+    <Compile Include="Interfaces\ICircle.cs" />
     <Compile Include="InfoWindowLongClickedEventArgs.cs" />
     <Compile Include="Internals\TakeSnapshotMessage.cs" />
+    <Compile Include="Interfaces\IPin.cs" />
     <Compile Include="Logics\BaseCameraLogic.cs" />
+    <Compile Include="Pin.cs" />
+    <Compile Include="Polygon.cs" />
+    <Compile Include="Polyline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Distance.cs" />
     <Compile Include="Geocoder.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="PinType.cs" />
-    <Compile Include="Pin.cs" />
     <Compile Include="MapType.cs" />
     <Compile Include="MapSpan.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
-    <Compile Include="Polyline.cs" />
-    <Compile Include="Polygon.cs" />
-    <Compile Include="Circle.cs" />
     <Compile Include="Internals\MoveToRegionMessage.cs" />
     <Compile Include="SelectedPinChangedEventArgs.cs" />
-    <Compile Include="TileLayer.cs" />
     <Compile Include="Logics\BaseLogic.cs" />
     <Compile Include="Logics\DefaultLogic.cs" />
     <Compile Include="Logics\DefaultCircleLogic.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Internals\DelegateAnimationCallback.cs" />
     <Compile Include="Internals\CameraUpdateType.cs" />
     <Compile Include="Extensions\MapSpanExtensions.cs" />
+    <Compile Include="TileLayer.cs" />
     <Compile Include="UiSettings.cs" />
     <Compile Include="Logics\BaseUiSettingsLogic.cs" />
     <Compile Include="MapStyle.cs" />

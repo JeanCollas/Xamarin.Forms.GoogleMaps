@@ -376,7 +376,7 @@ namespace Xamarin.Forms.GoogleMaps.iOS
         /// </summary>
         /// <param name="outerItem">the pin.</param>
         /// <param name="innerItem">the marker options.</param>
-        protected virtual void OnMarkerCreating(Pin outerItem, Marker innerItem)
+        protected virtual void OnMarkerCreating(IPin outerItem, Marker innerItem)
         {
         }
 
@@ -386,7 +386,7 @@ namespace Xamarin.Forms.GoogleMaps.iOS
         /// </summary>
         /// <param name="outerItem">the pin.</param>
         /// <param name="innerItem">thr marker.</param>
-        protected virtual void OnMarkerCreated(Pin outerItem, Marker innerItem)
+        protected virtual void OnMarkerCreated(IPin outerItem, Marker innerItem)
         {
         }
 
@@ -396,7 +396,7 @@ namespace Xamarin.Forms.GoogleMaps.iOS
         /// </summary>
         /// <param name="outerItem">the pin.</param>
         /// <param name="innerItem">thr marker.</param>
-        protected virtual void OnMarkerDeleting(Pin outerItem, Marker innerItem)
+        protected virtual void OnMarkerDeleting(IPin outerItem, Marker innerItem)
         {
         }
 
@@ -406,7 +406,7 @@ namespace Xamarin.Forms.GoogleMaps.iOS
         /// </summary>
         /// <param name="outerItem">the pin.</param>
         /// <param name="innerItem">thr marker.</param>
-        protected virtual void OnMarkerDeleted(Pin outerItem, Marker innerItem)
+        protected virtual void OnMarkerDeleted(IPin outerItem, Marker innerItem)
         {
         }
 

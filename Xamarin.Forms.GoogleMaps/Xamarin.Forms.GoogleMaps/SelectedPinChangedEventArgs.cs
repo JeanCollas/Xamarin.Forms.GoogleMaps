@@ -3,13 +3,13 @@ namespace Xamarin.Forms.GoogleMaps
 {
     public sealed class SelectedPinChangedEventArgs : EventArgs
     {
-        public Pin SelectedPin
+        public IPin SelectedPin
         {
             get;
             private set;
         }
 
-        internal SelectedPinChangedEventArgs(Pin selectedPin)
+        internal SelectedPinChangedEventArgs(IPin selectedPin)
         {
             this.SelectedPin = selectedPin;
         }

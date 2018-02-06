@@ -8,9 +8,9 @@ namespace Xamarin.Forms.GoogleMaps
 {
     public sealed class InfoWindowLongClickedEventArgs : EventArgs
     {
-        public Pin Pin { get; }
+        public IPin Pin { get; }
 
-        internal InfoWindowLongClickedEventArgs(Pin pin)
+        internal InfoWindowLongClickedEventArgs(IPin pin)
         {
             this.Pin = pin;
         }

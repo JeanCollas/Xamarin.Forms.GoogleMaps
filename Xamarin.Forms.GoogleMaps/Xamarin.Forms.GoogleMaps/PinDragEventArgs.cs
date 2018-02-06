@@ -3,13 +3,13 @@ namespace Xamarin.Forms.GoogleMaps
 {
     public sealed class PinDragEventArgs : EventArgs
     {
-        public Pin Pin
+        public IPin Pin
         {
             get;
             private set;
         }
 
-        internal PinDragEventArgs(Pin pin)
+        internal PinDragEventArgs(IPin pin)
         {
             this.Pin = pin;
         }

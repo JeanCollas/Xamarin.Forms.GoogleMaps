@@ -12,7 +12,7 @@ using Xamarin.Forms.GoogleMaps.Extensions;
 
 namespace Xamarin.Forms.GoogleMaps
 {
-    public class Map : View, IEnumerable<Pin>
+    public class Map : View, IEnumerable<IPin>
     {
         public static readonly BindableProperty MapTypeProperty = BindableProperty.Create(nameof(MapType), typeof(MapType), typeof(Map), default(MapType));
 
@@ -28,7 +28,7 @@ namespace Xamarin.Forms.GoogleMaps
         public static readonly BindableProperty HasRotationEnabledProperty = BindableProperty.Create(nameof(HasRotationEnabled), typeof(bool), typeof(Map), true);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        public static readonly BindableProperty SelectedPinProperty = BindableProperty.Create(nameof(SelectedPin), typeof(Pin), typeof(Map), default(Pin), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly BindableProperty SelectedPinProperty = BindableProperty.Create(nameof(SelectedPin), typeof(IPin), typeof(Map), default(IPin), defaultBindingMode: BindingMode.TwoWay);
 
         public static readonly BindableProperty IsTrafficEnabledProperty = BindableProperty.Create(nameof(IsTrafficEnabled), typeof(bool), typeof(Map), false);
 
@@ -53,10 +53,10 @@ namespace Xamarin.Forms.GoogleMaps
 
         public static readonly BindableProperty MapStyleProperty = BindableProperty.Create(nameof(MapStyle), typeof(MapStyle), typeof(Map), null);
 
-        readonly ObservableCollection<Pin> _pins = new ObservableCollection<Pin>();
+        readonly ObservableCollection<IPin> _pins = new ObservableCollection<IPin>();
         readonly ObservableCollection<Polyline> _polylines = new ObservableCollection<Polyline>();
         readonly ObservableCollection<Polygon> _polygons = new ObservableCollection<Polygon>();
-        readonly ObservableCollection<Circle> _circles = new ObservableCollection<Circle>();
+        readonly ObservableCollection<ICircle> _circles = new ObservableCollection<ICircle>();
         readonly ObservableCollection<TileLayer> _tileLayers = new ObservableCollection<TileLayer>();
         readonly ObservableCollection<GroundOverlay> _groundOverlays = new ObservableCollection<GroundOverlay>();
 
@@ -153,9 +153,9 @@ namespace Xamarin.Forms.GoogleMaps
             set { SetValue(MapTypeProperty, value); }
         }
 
-        public Pin SelectedPin
+        public IPin SelectedPin
         {
-            get { return (Pin)GetValue(SelectedPinProperty); }
+            get { return (IPin)GetValue(SelectedPinProperty); }
             set { SetValue(SelectedPinProperty, value); }
         }
 
@@ -184,7 +184,7 @@ namespace Xamarin.Forms.GoogleMaps
             set { SetValue(MapStyleProperty, value); }
         }
 
-        public IList<Pin> Pins
+        public IList<IPin> Pins
         {
             get { return _pins; }
         }
@@ -199,7 +199,7 @@ namespace Xamarin.Forms.GoogleMaps
             get { return _polygons; }
         }
 
-        public IList<Circle> Circles
+        public IList<ICircle> Circles
         {
             get { return _circles; }
         }
@@ -236,7 +236,7 @@ namespace Xamarin.Forms.GoogleMaps
             return GetEnumerator();
         }
 
-        public IEnumerator<Pin> GetEnumerator()
+        public IEnumerator<IPin> GetEnumerator()
         {
             return _pins.GetEnumerator();
         }
@@ -289,7 +289,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         void PinsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null && e.NewItems.Cast<Pin>().Any(pin => pin.Label == null))
+            if (e.NewItems != null && e.NewItems.Cast<IPin>().Any(pin => pin.Label == null))
                 throw new ArgumentException("Pin must have a Label to be added to a map");
         }
 
@@ -307,7 +307,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         void CirclesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.NewItems != null && e.NewItems.Cast<Circle>().Any(circle => (
+            if (e.NewItems != null && e.NewItems.Cast<ICircle>().Any(circle => (
                 circle?.Center == null || circle?.Radius == null || circle.Radius.Meters <= 0f)))
                 throw new ArgumentException("Circle must have a center and radius");
         }
@@ -322,41 +322,41 @@ namespace Xamarin.Forms.GoogleMaps
         {
         }
 
-        internal void SendSelectedPinChanged(Pin selectedPin)
+        internal void SendSelectedPinChanged(IPin selectedPin)
         {
             SelectedPinChanged?.Invoke(this, new SelectedPinChangedEventArgs(selectedPin));
         }
 
-        internal bool SendPinClicked(Pin pin)
+        internal bool SendPinClicked(IPin pin)
         {
             var args = new PinClickedEventArgs(pin);
             PinClicked?.Invoke(this, args);
             return args.Handled;
         }
 
-        internal void SendInfoWindowClicked(Pin pin)
+        internal void SendInfoWindowClicked(IPin pin)
         {
             var args = new InfoWindowClickedEventArgs(pin);
             InfoWindowClicked?.Invoke(this, args);
         }
 
-        internal void SendInfoWindowLongClicked(Pin pin)
+        internal void SendInfoWindowLongClicked(IPin pin)
         {
             var args = new InfoWindowLongClickedEventArgs(pin);
             InfoWindowLongClicked?.Invoke(this, args);
         }
 
-        internal void SendPinDragStart(Pin pin)
+        internal void SendPinDragStart(IPin pin)
         {
             PinDragStart?.Invoke(this, new PinDragEventArgs(pin));
         }
 
-        internal void SendPinDragEnd(Pin pin)
+        internal void SendPinDragEnd(IPin pin)
         {
             PinDragEnd?.Invoke(this, new PinDragEventArgs(pin));
         }
 
-        internal void SendPinDragging(Pin pin)
+        internal void SendPinDragging(IPin pin)
         {
             PinDragging?.Invoke(this, new PinDragEventArgs(pin));
         }

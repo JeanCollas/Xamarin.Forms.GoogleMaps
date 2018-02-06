@@ -3,59 +3,59 @@ using System.ComponentModel;
 
 namespace Xamarin.Forms.GoogleMaps.Logics
 {
-    internal abstract class DefaultPinLogic<TNative, TNativeMap> : DefaultLogic<Pin, TNative, TNativeMap>
+    internal abstract class DefaultPinLogic<TNative, TNativeMap> : DefaultLogic<IPin, TNative, TNativeMap>
         where TNative : class
         where TNativeMap : class
     {
         protected override void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnItemPropertyChanged(sender, e);
-            var outerItem = sender as Pin;
+            var outerItem = sender as IPin;
             var nativeItem = outerItem?.NativeObject as TNative;
 
             if (nativeItem == null)
                 return;
 
-            if (e.PropertyName == Pin.AddressProperty.PropertyName) OnUpdateAddress(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.LabelProperty.PropertyName) OnUpdateLabel(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.PositionProperty.PropertyName) OnUpdatePosition(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.TypeProperty.PropertyName) OnUpdateType(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.IconProperty.PropertyName) OnUpdateIcon(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.IsDraggableProperty.PropertyName) OnUpdateIsDraggable(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.RotationProperty.PropertyName) OnUpdateRotation(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.IsVisibleProperty.PropertyName) OnUpdateIsVisible(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.AnchorProperty.PropertyName) OnUpdateAnchor(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.FlatProperty.PropertyName) OnUpdateFlat(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.InfoWindowAnchorProperty.PropertyName) OnUpdateInfoWindowAnchor(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.ZIndexProperty.PropertyName) OnUpdateZIndex(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.TransparencyProperty.PropertyName) OnUpdateTransparency(outerItem, nativeItem);
+            if (e.PropertyName == nameof(IPin.Address)) OnUpdateAddress(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Label)) OnUpdateLabel(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Position)) OnUpdatePosition(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Type)) OnUpdateType(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Icon)) OnUpdateIcon(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.IsDraggable)) OnUpdateIsDraggable(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Rotation)) OnUpdateRotation(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.IsVisible)) OnUpdateIsVisible(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Anchor)) OnUpdateAnchor(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Flat)) OnUpdateFlat(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.InfoWindowAnchor)) OnUpdateInfoWindowAnchor(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.ZIndex)) OnUpdateZIndex(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(IPin.Transparency)) OnUpdateTransparency(outerItem, nativeItem);
         }
 
-        protected abstract void OnUpdateAddress(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateAddress(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateLabel(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateLabel(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdatePosition(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdatePosition(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateType(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateType(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateIcon(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateIcon(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateIsDraggable(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateIsDraggable(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateRotation(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateRotation(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateIsVisible(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateIsVisible(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateAnchor(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateAnchor(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateFlat(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateFlat(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateInfoWindowAnchor(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateInfoWindowAnchor(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateZIndex(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateZIndex(IPin outerItem, TNative nativeItem);
 
-        protected abstract void OnUpdateTransparency(Pin outerItem, TNative nativeItem);
+        protected abstract void OnUpdateTransparency(IPin outerItem, TNative nativeItem);
     }
 }
 

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.GoogleMaps
 {
-    public sealed class Circle : BindableObject
+    public sealed class Circle : BindableObject, ICircle
     {
         public static readonly BindableProperty StrokeWidthProperty = BindableProperty.Create(nameof(StrokeWidth) , typeof(float), typeof(Circle), 1f);
         public static readonly BindableProperty StrokeColorProperty = BindableProperty.Create(nameof(StrokeColor), typeof(Color), typeof(Circle), Color.Blue);
@@ -59,7 +59,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         public object Tag { get; set; }
 
-        public object NativeObject { get; internal set; }
+        public object NativeObject { get; set; }
 
         public event EventHandler Clicked;
 
@@ -67,7 +67,7 @@ namespace Xamarin.Forms.GoogleMaps
         {
         }
 
-        internal bool SendTap()
+        public bool SendTap()
         {
             EventHandler handler = Clicked;
             if (handler == null)

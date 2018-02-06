@@ -10,22 +10,22 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
 {
     internal class PinLogic : DefaultPinLogic<Marker, MapView>
     {
-        protected override IList<Pin> GetItems(Map map) => map.Pins;
+        protected override IList<IPin> GetItems(Map map) => map.Pins;
 
         private bool _onMarkerEvent;
-        private Pin _draggingPin;
+        private IPin _draggingPin;
         private volatile bool _withoutUpdateNative = false;
 
-        private readonly Action<Pin, Marker> _onMarkerCreating;
-        private readonly Action<Pin, Marker> _onMarkerCreated;
-        private readonly Action<Pin, Marker> _onMarkerDeleting;
-        private readonly Action<Pin, Marker> _onMarkerDeleted;
+        private readonly Action<IPin, Marker> _onMarkerCreating;
+        private readonly Action<IPin, Marker> _onMarkerCreated;
+        private readonly Action<IPin, Marker> _onMarkerDeleting;
+        private readonly Action<IPin, Marker> _onMarkerDeleted;
 
         public PinLogic(
-            Action<Pin, Marker> onMarkerCreating,
-            Action<Pin, Marker> onMarkerCreated,
-            Action<Pin, Marker> onMarkerDeleting,
-            Action<Pin, Marker> onMarkerDeleted)
+            Action<IPin, Marker> onMarkerCreating,
+            Action<IPin, Marker> onMarkerCreated,
+            Action<IPin, Marker> onMarkerDeleting,
+            Action<IPin, Marker> onMarkerDeleted)
         {
             _onMarkerCreating = onMarkerCreating;
             _onMarkerCreated = onMarkerCreated;
@@ -66,7 +66,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             base.Unregister(nativeMap, map);
         }
 
-        protected override Marker CreateNativeItem(Pin outerItem)
+        protected override Marker CreateNativeItem(IPin outerItem)
         {
             var nativeMarker = Marker.FromPosition(outerItem.Position.ToCoord());
             nativeMarker.Title = outerItem.Label;
@@ -95,7 +95,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             return nativeMarker;
         }
 
-        protected override Marker DeleteNativeItem(Pin outerItem)
+        protected override Marker DeleteNativeItem(IPin outerItem)
         {
             var nativeMarker = outerItem.NativeObject as Marker;
 
@@ -121,7 +121,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        void UpdateSelectedPin(Pin pin)
+        void UpdateSelectedPin(IPin pin)
         {
             if (pin != null)
                 NativeMap.SelectedMarker = (Marker)pin.NativeObject;
@@ -129,7 +129,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
                 NativeMap.SelectedMarker = null;
         }
 
-        Pin LookupPin(Marker marker)
+        IPin LookupPin(Marker marker)
         {
             return GetItems(Map).FirstOrDefault(outerItem => ReferenceEquals(outerItem.NativeObject, marker));
         }
@@ -234,7 +234,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        void UpdatePositionWithoutMove(Pin pin, Position position)
+        void UpdatePositionWithoutMove(IPin pin, Position position)
         {
             try
             {
@@ -247,13 +247,13 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        protected override void OnUpdateAddress(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateAddress(IPin outerItem, Marker nativeItem)
             => nativeItem.Snippet = outerItem.Address;
 
-        protected override void OnUpdateLabel(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateLabel(IPin outerItem, Marker nativeItem)
             => nativeItem.Title = outerItem.Label;
 
-        protected override void OnUpdatePosition(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdatePosition(IPin outerItem, Marker nativeItem)
         {
             if (!_withoutUpdateNative)
             {
@@ -261,11 +261,11 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        protected override void OnUpdateType(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateType(IPin outerItem, Marker nativeItem)
         {
         }
 
-        protected override void OnUpdateIcon(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateIcon(IPin outerItem, Marker nativeItem)
         {
             if (outerItem.Icon.Type == BitmapDescriptorType.View)
             {
@@ -277,12 +277,12 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        protected override void OnUpdateIsDraggable(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateIsDraggable(IPin outerItem, Marker nativeItem)
         {
             nativeItem.Draggable = outerItem?.IsDraggable ?? false;
         }
 
-        protected void OnUpdateIconView(Pin outerItem, Marker nativeItem)
+        protected void OnUpdateIconView(IPin outerItem, Marker nativeItem)
         {
             if (outerItem?.Icon?.Type == BitmapDescriptorType.View && outerItem?.Icon?.View != null)
             {
@@ -300,12 +300,12 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        protected override void OnUpdateRotation(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateRotation(IPin outerItem, Marker nativeItem)
         {
             nativeItem.Rotation = outerItem?.Rotation ?? 0f;
         }
 
-        protected override void OnUpdateIsVisible(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateIsVisible(IPin outerItem, Marker nativeItem)
         {
             if (outerItem?.IsVisible ?? false)
             {
@@ -319,27 +319,27 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             }
         }
 
-        protected override void OnUpdateAnchor(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateAnchor(IPin outerItem, Marker nativeItem)
         {
             nativeItem.GroundAnchor = new CGPoint(outerItem.Anchor.X, outerItem.Anchor.Y);
         }
 
-        protected override void OnUpdateFlat(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateFlat(IPin outerItem, Marker nativeItem)
         {
             nativeItem.Flat = outerItem.Flat;
         }
 
-        protected override void OnUpdateInfoWindowAnchor(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateInfoWindowAnchor(IPin outerItem, Marker nativeItem)
         {
             nativeItem.InfoWindowAnchor = new CGPoint(outerItem.InfoWindowAnchor.X, outerItem.InfoWindowAnchor.Y);
         }
 
-        protected override void OnUpdateZIndex(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateZIndex(IPin outerItem, Marker nativeItem)
         {
             nativeItem.ZIndex = outerItem.ZIndex;
         }
 
-        protected override void OnUpdateTransparency(Pin outerItem, Marker nativeItem)
+        protected override void OnUpdateTransparency(IPin outerItem, Marker nativeItem)
         {
             nativeItem.Opacity = 1f - outerItem.Transparency;
         }

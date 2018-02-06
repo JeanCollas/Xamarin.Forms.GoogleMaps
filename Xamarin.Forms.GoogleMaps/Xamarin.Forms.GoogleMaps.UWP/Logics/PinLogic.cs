@@ -67,7 +67,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.UWP
             Map.SendMapLongClicked(args.Location.Position.ToPosition());
         }
 
-        protected override PushPin CreateNativeItem(Pin outerItem)
+        protected override PushPin CreateNativeItem(IPin outerItem)
         {
             var pushpin = new PushPin(outerItem);
             pushpin.Tapped += Pushpin_Tapped;
@@ -84,7 +84,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.UWP
 
         private void PushpinOnInfoWindowClicked(object sender, TappedRoutedEventArgs tappedRoutedEventArgs)
         {
-            Map.SendInfoWindowClicked(((Pin)sender));
+            Map.SendInfoWindowClicked(((IPin)sender));
         }
 
         private void Pushpin_Holding(object sender, Windows.UI.Xaml.Input.HoldingRoutedEventArgs e)
@@ -130,12 +130,12 @@ namespace Xamarin.Forms.GoogleMaps.Logics.UWP
             Map.SendSelectedPinChanged(Map.SelectedPin);
         }
 
-        Pin LookupPin(PushPin marker)
+        IPin LookupPin(PushPin marker)
         {
             return Map.Pins.FirstOrDefault(outerItem => ((PushPin)outerItem.NativeObject).Id == marker.Id);
         }
 
-        protected override PushPin DeleteNativeItem(Pin outerItem)
+        protected override PushPin DeleteNativeItem(IPin outerItem)
         {
             var nativePushpin = outerItem.NativeObject as PushPin;
 
@@ -158,72 +158,72 @@ namespace Xamarin.Forms.GoogleMaps.Logics.UWP
             return nativePushpin;
         }
 
-        protected override IList<Pin> GetItems(Map map)
+        protected override IList<IPin> GetItems(Map map)
         {
             return map.Pins;
         }
 
-        protected override void OnUpdateAddress(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateAddress(IPin outerItem, PushPin nativeItem)
         {
             nativeItem.Address.Text = outerItem.Address;
         }
 
-        protected override void OnUpdateLabel(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateLabel(IPin outerItem, PushPin nativeItem)
         {
             nativeItem.PinLabel.Text = outerItem.Label;
         }
 
-        protected override void OnUpdateIcon(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateIcon(IPin outerItem, PushPin nativeItem)
         {
             nativeItem.UpdateIcon(outerItem);
         }
 
-        protected override void OnUpdateIsDraggable(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateIsDraggable(IPin outerItem, PushPin nativeItem)
         {
             //Not implemented
         }
 
-        protected override void OnUpdatePosition(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdatePosition(IPin outerItem, PushPin nativeItem)
         {
             nativeItem.UpdateLocation();
         }
 
-        protected override void OnUpdateRotation(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateRotation(IPin outerItem, PushPin nativeItem)
         {
             //Not Implemented
         }
 
-        protected override void OnUpdateType(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateType(IPin outerItem, PushPin nativeItem)
         {
             //not implemented
         }
 
-        protected override void OnUpdateIsVisible(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateIsVisible(IPin outerItem, PushPin nativeItem)
         {
             nativeItem.Visibility = outerItem?.IsVisible ?? false ?
                 Windows.UI.Xaml.Visibility.Visible :
                 Windows.UI.Xaml.Visibility.Collapsed;
         }
 
-        protected override void OnUpdateAnchor(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateAnchor(IPin outerItem, PushPin nativeItem)
         {
             //not implemented
         }
 
-        protected override void OnUpdateFlat(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateFlat(IPin outerItem, PushPin nativeItem)
         {
             //not implemented
         }
 
-        protected override void OnUpdateInfoWindowAnchor(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateInfoWindowAnchor(IPin outerItem, PushPin nativeItem)
         {
             //not implemented
         }
-        protected override void OnUpdateZIndex(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateZIndex(IPin outerItem, PushPin nativeItem)
         {
             //not implemented
         }
-        protected override void OnUpdateTransparency(Pin outerItem, PushPin nativeItem)
+        protected override void OnUpdateTransparency(IPin outerItem, PushPin nativeItem)
         {
             //not implemented
         }

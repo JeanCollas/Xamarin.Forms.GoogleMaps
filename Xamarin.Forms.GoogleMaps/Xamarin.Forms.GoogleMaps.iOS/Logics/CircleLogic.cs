@@ -11,7 +11,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
 {
     internal class CircleLogic : DefaultCircleLogic<NativeCircle, MapView>
     {
-        protected override IList<Circle> GetItems(Map map) => map.Circles;
+        protected override IList<ICircle> GetItems(Map map) => map.Circles;
 
         internal override void Register(MapView oldNativeMap, Map oldMap, MapView newNativeMap, Map newMap)
         {
@@ -33,7 +33,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             base.Unregister(nativeMap, map);
         }
 
-        protected override NativeCircle CreateNativeItem(Circle outerItem)
+        protected override NativeCircle CreateNativeItem(ICircle outerItem)
         {
             var nativeCircle = NativeCircle.FromPosition(
                 outerItem.Center.ToCoord(), outerItem.Radius.Meters);
@@ -48,7 +48,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             return nativeCircle;
         }
 
-        protected override NativeCircle DeleteNativeItem(Circle outerItem)
+        protected override NativeCircle DeleteNativeItem(ICircle outerItem)
         {
             var nativeCircle = outerItem.NativeObject as NativeCircle;
             nativeCircle.Map = null;
@@ -62,25 +62,25 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             targetOuterItem?.SendTap();
         }
 
-        protected override void OnUpdateStrokeWidth(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateStrokeWidth(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.StrokeWidth = outerItem.StrokeWidth;
 
-        protected override void OnUpdateStrokeColor(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateStrokeColor(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.StrokeColor = outerItem.StrokeColor.ToUIColor();
 
-        protected override void OnUpdateFillColor(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateFillColor(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.FillColor = outerItem.FillColor.ToUIColor();
 
-        protected override void OnUpdateCenter(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateCenter(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.Position = outerItem.Center.ToCoord();
 
-        protected override void OnUpdateRadius(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateRadius(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.Radius = outerItem.Radius.Meters;
 
-        protected override void OnUpdateIsClickable(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateIsClickable(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.Tappable = outerItem.IsClickable;
 
-        protected override void OnUpdateZIndex(Circle outerItem, NativeCircle nativeItem)
+        protected override void OnUpdateZIndex(ICircle outerItem, NativeCircle nativeItem)
             => nativeItem.ZIndex = outerItem.ZIndex;
     }
 }

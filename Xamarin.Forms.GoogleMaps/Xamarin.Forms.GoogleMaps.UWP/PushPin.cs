@@ -22,7 +22,7 @@ namespace Xamarin.Forms.Maps.WinRT
 {
     internal class PushPin : ContentControl
     {
-        readonly Pin _pin;
+        readonly IPin _pin;
 
         public Guid Id { get; set; }
 
@@ -34,7 +34,7 @@ namespace Xamarin.Forms.Maps.WinRT
 
         public event EventHandler<TappedRoutedEventArgs> InfoWindowClicked;
 
-        internal PushPin(Pin pin)
+        internal PushPin(IPin pin)
         {
             if (pin == null)
                 throw new ArgumentNullException();
@@ -52,7 +52,7 @@ namespace Xamarin.Forms.Maps.WinRT
             pin.NativeObject = this;
         }
 
-        private void SetupDetailsView(Pin pin)
+        private void SetupDetailsView(IPin pin)
         {
             //Setup details view
             DetailsView = new StackPanel()
@@ -93,7 +93,7 @@ namespace Xamarin.Forms.Maps.WinRT
             Root.Children.Add(DetailsView);
         }
 
-        public void UpdateIcon(Pin pin)
+        public void UpdateIcon(IPin pin)
         {
             if (pin.Icon == null || pin.Icon.Type == BitmapDescriptorType.Default)
             {
@@ -152,7 +152,7 @@ namespace Xamarin.Forms.Maps.WinRT
         }
 
         //TODO: implement xamarin view to UWP
-        private void TransformXamarinViewToUWPBitmap(Pin outerItem, ContentControl nativeItem)
+        private void TransformXamarinViewToUWPBitmap(IPin outerItem, ContentControl nativeItem)
         {
             if (outerItem?.Icon?.Type == BitmapDescriptorType.View && outerItem?.Icon?.View != null)
             {

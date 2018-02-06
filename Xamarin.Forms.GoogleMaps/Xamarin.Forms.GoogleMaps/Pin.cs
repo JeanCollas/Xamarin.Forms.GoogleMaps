@@ -2,8 +2,10 @@
 
 namespace Xamarin.Forms.GoogleMaps
 {
-    public sealed class Pin : BindableObject
+    public sealed class Pin : BindableObject, IPin
     {
+        public static readonly BindableProperty PinIdProperty = BindableProperty.Create(nameof(PinId), typeof(string), typeof(Pin), default(string));
+
         public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(PinType), typeof(Pin), default(PinType));
 
         public static readonly BindableProperty PositionProperty = BindableProperty.Create(nameof(Position), typeof(Position), typeof(Pin), default(Position));
@@ -29,6 +31,12 @@ namespace Xamarin.Forms.GoogleMaps
         public static readonly BindableProperty ZIndexProperty = BindableProperty.Create(nameof(ZIndex), typeof(int), typeof(Pin), 0);
 
         public static readonly BindableProperty TransparencyProperty = BindableProperty.Create(nameof(Transparency), typeof(float), typeof(Pin), 0f);
+
+        public string PinId
+        {
+            get { return (string)GetValue(PinIdProperty); }
+            set { SetValue(PinIdProperty, value); }
+        }
 
         public string Label
         {
@@ -92,8 +100,8 @@ namespace Xamarin.Forms.GoogleMaps
 
         public Point InfoWindowAnchor
         {
-            get { return (Point) GetValue(InfoWindowAnchorProperty); }
-            set { SetValue(InfoWindowAnchorProperty, value);}
+            get { return (Point)GetValue(InfoWindowAnchorProperty); }
+            set { SetValue(InfoWindowAnchorProperty, value); }
         }
 
         public int ZIndex
@@ -110,7 +118,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         public object Tag { get; set; }
 
-        public object NativeObject { get; internal set; }
+        public object NativeObject { get; set; }
 
         [Obsolete("Please use Map.PinClicked instead of this")]
         public event EventHandler Clicked;
@@ -148,7 +156,7 @@ namespace Xamarin.Forms.GoogleMaps
             return !Equals(left, right);
         }
 
-        internal bool SendTap()
+        public bool SendTap()
         {
             EventHandler handler = Clicked;
             if (handler == null)
@@ -160,7 +168,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         bool Equals(Pin other)
         {
-            return string.Equals(Label, other.Label) && Equals(Position, other.Position) && Type == other.Type && string.Equals(Address, other.Address);
+            return string.Equals(PinId, other.PinId) && string.Equals(Label, other.Label) && Equals(Position, other.Position) && Type == other.Type && string.Equals(Address, other.Address);
         }
     }
 }
