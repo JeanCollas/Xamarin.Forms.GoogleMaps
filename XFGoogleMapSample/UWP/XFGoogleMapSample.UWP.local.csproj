@@ -11,7 +11,7 @@
     <AssemblyName>XFGoogleMapSample.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
@@ -137,9 +137,9 @@
       <Project>{c62fcb91-7d10-4665-912c-b7ccec9535d7}</Project>
       <Name>Xamarin.Forms.GoogleMaps.UWP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XFGoogleMapSample\XFGoogleMapSample.csproj">
+    <ProjectReference Include="..\XFGoogleMapSample\XFGoogleMapSample.local.csproj">
       <Project>{e5febca7-6127-4002-b7b3-3ee4cc362b25}</Project>
-      <Name>XFGoogleMapSample</Name>
+      <Name>XFGoogleMapSample.local</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
