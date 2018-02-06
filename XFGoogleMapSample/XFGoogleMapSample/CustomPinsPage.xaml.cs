@@ -203,7 +203,7 @@ namespace XFGoogleMapSample
             map.MoveToRegion(MapSpan.FromCenterAndRadius(_pinTokyo.Position, Distance.FromMeters(5000)), true);
         }
 
-        private string PrintPin(Pin pin)
+        private string PrintPin(IPin pin)
         {
             return $"{pin.Label}({pin.Position.Latitude.ToString("0.000")},{pin.Position.Longitude.ToString("0.000")})";
         }
