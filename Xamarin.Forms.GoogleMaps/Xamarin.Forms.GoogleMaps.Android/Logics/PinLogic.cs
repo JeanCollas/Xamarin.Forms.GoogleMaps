@@ -276,10 +276,15 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
         }
 
         protected override void OnUpdateAddress(Pin outerItem, Marker nativeItem)
-            => nativeItem.Snippet = outerItem.Address;
+        {
+            nativeItem.Snippet = outerItem.Address;
+        }
+
 
         protected override void OnUpdateLabel(Pin outerItem, Marker nativeItem)
-            => nativeItem.Title = outerItem.Label;
+        {
+            nativeItem.Title = outerItem.Label;
+        }
 
         protected override void OnUpdatePosition(Pin outerItem, Marker nativeItem)
         {

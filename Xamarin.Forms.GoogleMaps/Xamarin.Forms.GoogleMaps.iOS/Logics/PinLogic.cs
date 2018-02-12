@@ -51,8 +51,9 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
         protected override Marker CreateNativeItem(Pin outerItem)
         {
             var nativeMarker = Marker.FromPosition(outerItem.Position.ToCoord());
-            nativeMarker.Title = outerItem.Label;
+            nativeMarker.Title = outerItem.Label ?? string.Empty;
             nativeMarker.Snippet = outerItem.Address ?? string.Empty;
+
             nativeMarker.Draggable = outerItem.IsDraggable;
             nativeMarker.Rotation = outerItem.Rotation;
             nativeMarker.ZIndex = outerItem.ZIndex;
@@ -219,11 +220,15 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
         }
 
         protected override void OnUpdateAddress(Pin outerItem, Marker nativeItem)
-            => nativeItem.Snippet = outerItem.Address;
+        {
+            nativeItem.Snippet = outerItem.Address;
+        }
 
         protected override void OnUpdateLabel(Pin outerItem, Marker nativeItem)
-            => nativeItem.Title = outerItem.Label;
-
+        {
+            nativeItem.Title = outerItem.Label;
+        }
+            
         protected override void OnUpdatePosition(Pin outerItem, Marker nativeItem)
         {
             if (!_withoutUpdateNative)

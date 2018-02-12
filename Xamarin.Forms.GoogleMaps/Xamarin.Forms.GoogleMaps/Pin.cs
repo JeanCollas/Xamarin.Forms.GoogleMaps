@@ -12,7 +12,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         public static readonly BindableProperty AddressProperty = BindableProperty.Create("Address", typeof(string), typeof(Pin), default(string));
 
-        public static readonly BindableProperty IconProperty = BindableProperty.Create("Icon", typeof(BitmapDescriptor), typeof(Pin), default(BitmapDescriptor));
+        public static readonly BindableProperty IconProperty = BindableProperty.Create(nameof(Icon), typeof(BitmapDescriptor), typeof(Pin), default(BitmapDescriptor));
 
         public static readonly BindableProperty IsDraggableProperty = BindableProperty.Create("IsDraggable", typeof(bool), typeof(Pin), false);
 
@@ -75,9 +75,6 @@ namespace Xamarin.Forms.GoogleMaps
             get { return (AppearMarkerAnimation)GetValue(AppearAnimationProperty); }
             set { SetValue(AppearAnimationProperty, value); }
         }
-
-        public string FullAddress { get; set; }
-        public string Date { get; set; }
 
         public object Tag { get; set; }
 
