@@ -84,9 +84,18 @@ namespace Xamarin.Forms.GoogleMaps.iOS
                     mkMapView.CameraPositionChanged += CameraPositionChanged;
                     mkMapView.CoordinateTapped += CoordinateTapped;
                     mkMapView.CoordinateLongPressed += CoordinateLongPressed;
+                    mkMapView.PaddingAdjustmentBehavior = MapViewPaddingAdjustmentBehavior.Automatic;
                 }
 
-                MessagingCenter.Subscribe<Map>(this, Map.CenterOnMyLocationMessageName, (s) => NativeMap.Animate(NativeMap.MyLocation.Coordinate), mapModel);
+                MessagingCenter.Subscribe<Map>
+                    (this, Map.CenterOnMyLocationMessageName, 
+                    (s) => 
+                    {
+                        var loc = NativeMap.MyLocation.Coordinate;
+                        Map.MyLocation = new Position(loc.Latitude, loc.Longitude);
+                        NativeMap.Animate(loc);
+                    }, 
+                    mapModel);
                 MessagingCenter.Subscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName, (s, a) => MoveToRegion(a.Span, a.Animate), mapModel);
                 if (mapModel.LastMoveToRegion != null)
                     MoveToRegion(mapModel.LastMoveToRegion, false);
@@ -187,18 +196,23 @@ namespace Xamarin.Forms.GoogleMaps.iOS
             Map.SendMapLongClicked(e.Coordinate.ToPosition());
         }
 
-        void MoveToRegion(MapSpan mapSpan, bool animated = true)
+        void MoveToRegion(MapSpan span, bool animated = true)
         {
-            Position center = mapSpan.Center;
-            var halfLat = mapSpan.LatitudeDegrees / 2d;
-            var halfLong = mapSpan.LongitudeDegrees / 2d;
-            var mapRegion = new CoordinateBounds(new CLLocationCoordinate2D(center.Latitude - halfLat, center.Longitude - halfLong),
-                                                new CLLocationCoordinate2D(center.Latitude + halfLat, center.Longitude + halfLong));
+            Position center = span.Center;
+
+            span = span.ClampLatitude(85, -85);
+            var halfLat = span.LatitudeDegrees / 2d;
+            var halfLong = span.LongitudeDegrees / 2d;
+
+            var ne = new CLLocationCoordinate2D(center.Latitude + halfLat, center.Longitude + halfLong);
+            var sw = new CLLocationCoordinate2D(center.Latitude - halfLat, center.Longitude - halfLong);
+            var mapRegion = new CoordinateBounds(sw, ne);
+            var update = CameraUpdate.FitBounds(mapRegion, 0);
 
             if (animated)
-                ((MapView)Control).Animate(CameraUpdate.FitBounds(mapRegion));
+                ((MapView)Control).Animate(update);
             else
-                ((MapView)Control).MoveCamera(CameraUpdate.FitBounds(mapRegion));
+                ((MapView)Control).MoveCamera(update);
         }
 
         void UpdateHasScrollEnabled()
@@ -214,7 +228,8 @@ namespace Xamarin.Forms.GoogleMaps.iOS
         void UpdateIsShowingUser()
         {
             ((MapView)Control).MyLocationEnabled = ((Map)Element).IsShowingUser;
-            ((MapView)Control).Settings.MyLocationButton = ((Map)Element).IsShowingUser;
+            //((MapView)Control).Settings.MyLocationButton = ((Map)Element).IsShowingUser;
+            ((MapView)Control).Settings.MyLocationButton = false;
         }
 
         void UpdateIsTrafficEnabled()

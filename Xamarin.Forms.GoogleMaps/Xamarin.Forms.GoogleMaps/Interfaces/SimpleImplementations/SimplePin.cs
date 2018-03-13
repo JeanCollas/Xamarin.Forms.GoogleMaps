@@ -42,6 +42,9 @@ namespace Xamarin.Forms.GoogleMaps.Interfaces.SimpleImplementations
         private BitmapDescriptor _PinIcon;
         public BitmapDescriptor PinIcon { get { return _PinIcon; } set { bool changed = _PinIcon != value; if (changed) { OnPropertyChanging(); _PinIcon = value; OnPropertyChanged(); } } }
 
+        private PinIconType _PinIconType;
+        public PinIconType PinIconType { get { return _PinIconType; } set { bool changed = _PinIconType != value; if (changed) { OnPropertyChanging(); _PinIconType = value; OnPropertyChanged(); } } }
+
         private IPinConfig _PinConfig = new SimplePinConfig();
         public IPinConfig PinConfig { get { return _PinConfig; } set { bool changed = _PinConfig != value; if (changed) { OnPropertyChanging(); _PinConfig = value; OnPropertyChanged(); } } }
 

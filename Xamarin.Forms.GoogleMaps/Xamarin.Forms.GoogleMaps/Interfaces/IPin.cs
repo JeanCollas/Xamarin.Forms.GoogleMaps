@@ -25,6 +25,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         float PinRotation { get; }
 
+        PinIconType PinIconType { get; set; }
         BitmapDescriptor PinIcon { get; set; }
 
         bool PinIsDraggable { get; }
@@ -80,7 +81,10 @@ namespace Xamarin.Forms.GoogleMaps
             var pin = new Pin() { BindingContext = iPin };
             pin.SetBinding(Pin.LabelProperty, nameof(IPin.PinTitle));
             pin.SetBinding(Pin.AddressProperty, nameof(IPin.PinSubTitle));
+
             pin.SetBinding(Pin.IconProperty, nameof(IPin.PinIcon));
+            pin.SetBinding(Pin.IconTypeProperty, nameof(IPin.PinIconType));
+
             pin.SetBinding(Pin.IsDraggableProperty, nameof(IPin.PinIsDraggable));
             pin.SetBinding(Pin.PositionProperty, nameof(IPin.PinPosition));
             pin.SetBinding(Pin.RotationProperty, nameof(IPin.PinRotation));

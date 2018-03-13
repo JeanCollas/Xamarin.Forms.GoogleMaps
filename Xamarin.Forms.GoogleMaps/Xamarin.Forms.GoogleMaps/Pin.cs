@@ -4,23 +4,35 @@ namespace Xamarin.Forms.GoogleMaps
 {
     public class Pin : BindableObject
     {
-        public static readonly BindableProperty TypeProperty = BindableProperty.Create("Type", typeof(PinType), typeof(Pin), default(PinType));
+        public static readonly BindableProperty TypeProperty 
+            = BindableProperty.Create("Type", typeof(PinType), typeof(Pin), default(PinType));
 
-        public static readonly BindableProperty PositionProperty = BindableProperty.Create("Position", typeof(Position), typeof(Pin), default(Position));
+        public static readonly BindableProperty PositionProperty 
+            = BindableProperty.Create("Position", typeof(Position), typeof(Pin), default(Position));
 
-        public static readonly BindableProperty LabelProperty = BindableProperty.Create("Label", typeof(string), typeof(Pin), default(string));
+        public static readonly BindableProperty LabelProperty 
+            = BindableProperty.Create("Label", typeof(string), typeof(Pin), default(string));
 
-        public static readonly BindableProperty AddressProperty = BindableProperty.Create("Address", typeof(string), typeof(Pin), default(string));
+        public static readonly BindableProperty AddressProperty 
+            = BindableProperty.Create("Address", typeof(string), typeof(Pin), default(string));
 
-        public static readonly BindableProperty IconProperty = BindableProperty.Create(nameof(Icon), typeof(BitmapDescriptor), typeof(Pin), default(BitmapDescriptor));
+        public static readonly BindableProperty IconTypeProperty
+            = BindableProperty.Create(nameof(IconType), typeof(PinIconType), typeof(Pin), default(PinIconType));
 
-        public static readonly BindableProperty IsDraggableProperty = BindableProperty.Create("IsDraggable", typeof(bool), typeof(Pin), false);
+        public static readonly BindableProperty IconProperty 
+            = BindableProperty.Create(nameof(Icon), typeof(BitmapDescriptor), typeof(Pin), default(BitmapDescriptor));
 
-        public static readonly BindableProperty ZIndexProperty = BindableProperty.Create(nameof(ZIndex), typeof(int), typeof(Pin), 0);
+        public static readonly BindableProperty IsDraggableProperty 
+            = BindableProperty.Create("IsDraggable", typeof(bool), typeof(Pin), false);
 
-        public static readonly BindableProperty RotationProperty = BindableProperty.Create("Rotation", typeof(float), typeof(Pin), 0f);
+        public static readonly BindableProperty ZIndexProperty 
+            = BindableProperty.Create(nameof(ZIndex), typeof(int), typeof(Pin), 0);
 
-        public static readonly BindableProperty AppearAnimationProperty = BindableProperty.Create(nameof(AppearAnimation), typeof(AppearMarkerAnimation), typeof(Pin), default(AppearMarkerAnimation));
+        public static readonly BindableProperty RotationProperty 
+            = BindableProperty.Create("Rotation", typeof(float), typeof(Pin), 0f);
+
+        public static readonly BindableProperty AppearAnimationProperty 
+            = BindableProperty.Create(nameof(AppearAnimation), typeof(AppearMarkerAnimation), typeof(Pin), default(AppearMarkerAnimation));
 
         public string Label
         {
@@ -50,6 +62,12 @@ namespace Xamarin.Forms.GoogleMaps
         {
             get { return (PinType)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
+        }
+
+        public PinIconType IconType
+        {
+            get { return (PinIconType)GetValue(IconTypeProperty); }
+            set { SetValue(IconTypeProperty, value); }
         }
 
         public BitmapDescriptor Icon

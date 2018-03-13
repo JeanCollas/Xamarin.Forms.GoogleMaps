@@ -7,6 +7,7 @@ using Google.Maps;
 using UIKit;
 using Xamarin.Forms.GoogleMaps.Extensions.iOS;
 using Xamarin.Forms.GoogleMaps.iOS.Extensions;
+
 namespace Xamarin.Forms.GoogleMaps.Logics.iOS
 {
     internal class PinLogic : DefaultPinLogic<Marker, MapView>
@@ -243,7 +244,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
 
         protected override void OnUpdateIcon(Pin outerItem, Marker nativeItem)
         {
-            if (outerItem.Icon.Type == BitmapDescriptorType.View)
+            if (outerItem.Icon != null && outerItem.Icon.Type == BitmapDescriptorType.View)
             {
                 OnUpdateIconView(outerItem, nativeItem);
             }

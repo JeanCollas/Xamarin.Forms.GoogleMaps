@@ -112,7 +112,11 @@ namespace Xamarin.Forms.GoogleMaps.Android
             MessagingCenter.Subscribe<Map>(this, Map.CenterOnMyLocationMessageName, (s) =>
             {
                 var loc = NativeMap?.MyLocation;
-                if (loc != null) NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(loc.Latitude, loc.Longitude)));
+                if (loc != null)
+                {
+                    Map.MyLocation = new Position(loc.Latitude, loc.Longitude);
+                    NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(loc.Latitude, loc.Longitude)));
+                }
             });
 
             var mapView2 = (MapView)Control;
@@ -150,8 +154,10 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons;
                 map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled;
                 map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
-                map.MyLocationEnabled = map.UiSettings.MyLocationButtonEnabled = Map.IsShowingUser;
+                map.MyLocationEnabled = Map.IsShowingUser;
+                map.UiSettings.MyLocationButtonEnabled = false;
                 map.TrafficEnabled = Map.IsTrafficEnabled;
+
                 SetMapType();
             }
 
@@ -185,9 +191,14 @@ namespace Xamarin.Forms.GoogleMaps.Android
             if (map == null)
                 return;
 
+            Position center = span.Center;
+
             span = span.ClampLatitude(85, -85);
-            var ne = new LatLng(span.Center.Latitude + span.LatitudeDegrees / 2, span.Center.Longitude + span.LongitudeDegrees / 2);
-            var sw = new LatLng(span.Center.Latitude - span.LatitudeDegrees / 2, span.Center.Longitude - span.LongitudeDegrees / 2);
+            var halfLat = span.LatitudeDegrees / 2d;
+            var halfLong = span.LongitudeDegrees / 2d;
+
+            var ne = new LatLng(center.Latitude + halfLat, center.Longitude + halfLong);
+            var sw = new LatLng(center.Latitude - halfLat, center.Longitude - halfLong);
             var update = CameraUpdateFactory.NewLatLngBounds(new LatLngBounds(sw, ne), 0);
 
             try
@@ -250,7 +261,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 return;
 
             if (e.PropertyName == nameof(Map.IsShowingUser))
-                NativeMap.MyLocationEnabled = NativeMap.UiSettings.MyLocationButtonEnabled = Map.IsShowingUser;
+                NativeMap.MyLocationEnabled = Map.IsShowingUser;
             else if (e.PropertyName == nameof(Map.HasScrollEnabled))
                 NativeMap.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
             else if (e.PropertyName == nameof(Map.HasZoomEnabled))
