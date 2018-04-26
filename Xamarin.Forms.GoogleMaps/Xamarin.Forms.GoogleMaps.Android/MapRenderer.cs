@@ -154,7 +154,11 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons;
                 map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled;
                 map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
-                map.MyLocationEnabled = Map.IsShowingUser;
+                try
+                {
+                    map.MyLocationEnabled = Map.IsShowingUser;
+                }
+                catch { }
                 map.UiSettings.MyLocationButtonEnabled = false;
                 map.TrafficEnabled = Map.IsTrafficEnabled;
 
@@ -261,7 +265,11 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 return;
 
             if (e.PropertyName == nameof(Map.IsShowingUser))
-                NativeMap.MyLocationEnabled = Map.IsShowingUser;
+                try
+                {
+                    NativeMap.MyLocationEnabled = Map.IsShowingUser;
+                }
+                catch { }
             else if (e.PropertyName == nameof(Map.HasScrollEnabled))
                 NativeMap.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
             else if (e.PropertyName == nameof(Map.HasZoomEnabled))
@@ -315,7 +323,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
             Map.SendMapLongClicked(point.ToPosition());
         }
 
-//        différencier mapcenter et screencenter
+        //        différencier mapcenter et screencenter
 
         void UpdateMapRegion(LatLng pos)
         {
@@ -381,21 +389,28 @@ namespace Xamarin.Forms.GoogleMaps.Android
             if (disposing && !_disposed)
             {
                 _disposed = true;
-
-                if (this.Map != null)
+                try
                 {
-                    MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName);
-                    MessagingCenter.Unsubscribe<Map>(this, Map.CenterOnMyLocationMessageName);
-                }
+                    if (this.Map != null)
+                    {
+                        MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName);
+                        MessagingCenter.Unsubscribe<Map>(this, Map.CenterOnMyLocationMessageName);
+                    }
 
-                foreach (var logic in _logics)
-                    logic.Unregister(NativeMap, Map);
+                    foreach (var logic in _logics)
+                        logic.Unregister(NativeMap, Map);
 
-                if (NativeMap != null)
-                {
-                    NativeMap.MyLocationEnabled = false;
-                    NativeMap.Dispose();
+                    if (NativeMap != null)
+                    {
+                        try
+                        {
+                            NativeMap.MyLocationEnabled = false;
+                        }
+                        catch { }
+                        NativeMap.Dispose();
+                    }
                 }
+                catch { }
             }
 
             base.Dispose(disposing);
