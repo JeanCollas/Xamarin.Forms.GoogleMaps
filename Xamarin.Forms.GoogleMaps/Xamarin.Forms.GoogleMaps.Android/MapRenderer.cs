@@ -148,16 +148,16 @@ namespace Xamarin.Forms.GoogleMaps.Android
         {
             if (map != null)
             {
-                map.SetOnMapClickListener(this);
-                map.SetOnMapLongClickListener(this);
-                map.UiSettings.MapToolbarEnabled = false;
-                map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons;
-                map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled;
-                map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
-                map.MyLocationEnabled = Map.IsShowingUser;
-                map.UiSettings.MyLocationButtonEnabled = false;
-                map.TrafficEnabled = Map.IsTrafficEnabled;
-
+                try { map.SetOnMapClickListener(this); } catch { }
+                try { map.SetOnMapLongClickListener(this); } catch { }
+                try { map.UiSettings.MapToolbarEnabled = false; } catch { }              
+                try { map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons; } catch { }              
+                try { map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled; } catch { }              
+                try { map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled; } catch { }               
+                try { map.MyLocationEnabled = Map.IsShowingUser; } catch { }                
+                try { map.UiSettings.MyLocationButtonEnabled = false; } catch { }               
+                try {map.TrafficEnabled = Map.IsTrafficEnabled; } catch { }
+                
                 SetMapType();
             }
 
@@ -261,7 +261,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 return;
 
             if (e.PropertyName == nameof(Map.IsShowingUser))
-                NativeMap.MyLocationEnabled = Map.IsShowingUser;
+                try { NativeMap.MyLocationEnabled = Map.IsShowingUser; } catch { } 
             else if (e.PropertyName == nameof(Map.HasScrollEnabled))
                 NativeMap.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
             else if (e.PropertyName == nameof(Map.HasZoomEnabled))
@@ -393,7 +393,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
 
                 if (NativeMap != null)
                 {
-                    NativeMap.MyLocationEnabled = false;
+                    try { NativeMap.MyLocationEnabled = false; } catch { }  
                     NativeMap.Dispose();
                 }
             }

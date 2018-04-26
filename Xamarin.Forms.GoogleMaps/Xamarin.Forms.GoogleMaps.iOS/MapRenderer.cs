@@ -227,9 +227,13 @@ namespace Xamarin.Forms.GoogleMaps.iOS
 
         void UpdateIsShowingUser()
         {
-            ((MapView)Control).MyLocationEnabled = ((Map)Element).IsShowingUser;
-            //((MapView)Control).Settings.MyLocationButton = ((Map)Element).IsShowingUser;
-            ((MapView)Control).Settings.MyLocationButton = false;
+            try
+            {
+                ((MapView)Control).MyLocationEnabled = ((Map)Element).IsShowingUser;
+                //((MapView)Control).Settings.MyLocationButton = ((Map)Element).IsShowingUser;
+                ((MapView)Control).Settings.MyLocationButton = false;
+            }
+            catch { }
         }
 
         void UpdateIsTrafficEnabled()

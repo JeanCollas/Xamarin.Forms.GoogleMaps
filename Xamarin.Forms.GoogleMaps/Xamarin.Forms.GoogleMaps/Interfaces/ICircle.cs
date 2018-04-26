@@ -19,12 +19,8 @@ namespace Xamarin.Forms.GoogleMaps
     {
         public static Circle ToCircle(this ICircle iCircle)
         {
-            var circle = new Circle() { BindingContext = iCircle };
-            circle.SetBinding(Circle.CenterProperty, nameof(ICircle.CircleCenter));
-            circle.SetBinding(Circle.FillColorProperty, nameof(ICircle.CircleFillColor));
-            circle.SetBinding(Circle.RadiusProperty, nameof(ICircle.CircleRadius));
-            circle.SetBinding(Circle.StrokeColorProperty, nameof(ICircle.CircleStrokeColor));
-            circle.SetBinding(Circle.StrokeWidthProperty, nameof(ICircle.CircleStrokeWidth));
+            var circle = new Circle(iCircle);
+
             return circle;
         }
 

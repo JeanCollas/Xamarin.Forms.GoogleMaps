@@ -95,19 +95,19 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
             if (nativePolygon == null)
                 return;
 
-            if (e.PropertyName == Polygon.StrokeWidthProperty.PropertyName)
+            if (e.PropertyName == nameof(Polygon.StrokeWidth))
             {
                 nativePolygon.StrokeWidth = polygon.StrokeWidth;
             }
-            else if (e.PropertyName == Polygon.StrokeColorProperty.PropertyName)
+            else if (e.PropertyName == nameof(Polygon.StrokeColor))
             {
                 nativePolygon.StrokeColor = polygon.StrokeColor.ToAndroid();
             }
-            else if (e.PropertyName == Polygon.FillColorProperty.PropertyName)
+            else if (e.PropertyName == nameof(Polygon.FillColor))
             {
                 nativePolygon.FillColor = polygon.FillColor.ToAndroid();
             }
-            else if (e.PropertyName == Polygon.IsClickableProperty.PropertyName)
+            else if (e.PropertyName == nameof(Polygon.IsClickable))
             {
                 nativePolygon.Clickable = polygon.IsClickable;
             }

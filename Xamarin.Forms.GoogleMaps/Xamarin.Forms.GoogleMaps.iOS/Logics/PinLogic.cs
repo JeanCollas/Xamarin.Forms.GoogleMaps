@@ -265,7 +265,7 @@ namespace Xamarin.Forms.GoogleMaps.Logics.iOS
             {
                 NativeMap.InvokeOnMainThread(() =>
                 {
-                    var iconView = outerItem.Icon.View;
+                    var iconView = outerItem.Icon.View as View;
                     var nativeView = Utils.ConvertFormsToNative(iconView, new CGRect(0, 0, iconView.WidthRequest, iconView.HeightRequest));
                     nativeView.BackgroundColor = UIColor.Clear;
                     nativeItem.GroundAnchor = new CGPoint(iconView.AnchorX, iconView.AnchorY);

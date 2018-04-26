@@ -94,15 +94,15 @@ namespace Xamarin.Forms.GoogleMaps.Logics.Android
             if (nativePolyline == null)
                 return;
 
-            if (e.PropertyName == Polyline.StrokeWidthProperty.PropertyName)
+            if (e.PropertyName == nameof(Polyline.StrokeWidth))
             {
                 nativePolyline.Width = polyline.StrokeWidth;
             }
-            else if (e.PropertyName == Polyline.StrokeColorProperty.PropertyName)
+            else if (e.PropertyName == nameof(Polyline.StrokeColor))
             {
                 nativePolyline.Color = polyline.StrokeColor.ToAndroid();
             }
-            else if (e.PropertyName == Polyline.IsClickableProperty.PropertyName)
+            else if (e.PropertyName == nameof(Polyline.IsClickable))
             {
                 nativePolyline.Clickable = polyline.IsClickable;
             }

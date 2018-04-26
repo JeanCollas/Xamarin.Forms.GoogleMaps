@@ -7,7 +7,7 @@ namespace Xamarin.Forms.GoogleMaps
     {
         public static BitmapDescriptor DefaultMarker(Color color)
         {
-            return BitmapDescriptor.DefaultMarker(color);
+            return BitmapDescriptor.DefaultMarker(/*color*/);
         }
 
         public static BitmapDescriptor FromBundle(string bundleName)
@@ -20,10 +20,10 @@ namespace Xamarin.Forms.GoogleMaps
             return BitmapDescriptor.FromStream(stream);
         }
 
-        public static BitmapDescriptor FromView(View view)
-        {
-            return BitmapDescriptor.FromView(view);
-        }
+        //public static BitmapDescriptor FromView(View view)
+        //{
+        //    return BitmapDescriptor.FromView(view);
+        //}
 
         //public static BitmapDescriptor FromPath(string absolutePath)
         //{

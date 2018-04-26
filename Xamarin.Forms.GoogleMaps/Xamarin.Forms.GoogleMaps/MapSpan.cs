@@ -5,11 +5,14 @@ using Xamarin.Forms.GoogleMaps.Internals;
 namespace Xamarin.Forms.GoogleMaps
 {
     [TypeConverter(typeof(MapSpanTypeConverter))]
-    public sealed class MapSpan
+    public sealed class MapSpan       
     {
         const double EarthRadiusKm = GeoConstants.EarthRadiusKm;
         const double EarthCircumferenceKm = GeoConstants.EarthCircumferenceKm;
         const double MinimumRangeDegrees = 0.001 / EarthCircumferenceKm * 360; // 1 meter
+
+        public MapSpan()
+        { }
 
         public MapSpan(Position center, double latitudeDegrees, double longitudeDegrees)
         {
@@ -78,6 +81,11 @@ namespace Xamarin.Forms.GoogleMaps
         public static MapSpan FromBounds(Bounds bounds)
         {
             return new MapSpan(bounds.Center, bounds.HeightDegrees, bounds.WidthDegrees);
+        }
+
+        public static MapSpan FromDegrees(Position center, double latitudeDegrees, double longitudeDegrees)
+        {
+            return new MapSpan(center, latitudeDegrees, longitudeDegrees);
         }
 
         public override int GetHashCode()
