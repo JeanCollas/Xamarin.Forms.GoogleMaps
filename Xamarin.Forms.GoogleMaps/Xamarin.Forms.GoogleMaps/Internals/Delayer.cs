@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace Xamarin.Forms.Tools
+namespace Xamarin.Forms.GoogleMaps.Tools
 {
     public class Delayer
     {

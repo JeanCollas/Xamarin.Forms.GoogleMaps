@@ -32,7 +32,7 @@ namespace Xamarin.Forms.GoogleMaps
         }
 
         // center on Rome by default
-        public Map() : this(new MapSpan(new Position(41.890202, 12.492049), 0.1, 0.1)) { }
+        public Map() : this((MapSpan)(new MapSpan(new Position(41.890202, 12.492049), 0.1, 0.1))) { }
 
         #region PinsSource Property
         public static readonly BindableProperty PinsSourceProperty = BindableProperty.Create(nameof(PinsSource), typeof(ObservableCollection<IPin>), typeof(Map), null, propertyChanged: OnPinsSourceChanged);
@@ -79,7 +79,7 @@ namespace Xamarin.Forms.GoogleMaps
             if (oldPins != null)
                 foreach (IPin oldPin in oldPins)
                 {
-                    var pin = Pins.FirstOrDefault(p => ReferenceEquals(oldPin, p.BindingContext));
+                    var pin = Pins.FirstOrDefault(p => ReferenceEquals(oldPin, p._IPin));
                     Pins.Remove(pin);
                 }
         }
@@ -136,7 +136,7 @@ namespace Xamarin.Forms.GoogleMaps
             if (oldCircles != null)
                 foreach (ICircle oldCircle in oldCircles)
                 {
-                    var circle = Circles.FirstOrDefault(p => ReferenceEquals(oldCircle, p.BindingContext));
+                    var circle = Circles.FirstOrDefault(p => ReferenceEquals(oldCircle, p._ICircle));
                     Circles.Remove(circle);
                 }
         }
@@ -236,7 +236,7 @@ namespace Xamarin.Forms.GoogleMaps
             var map = bindable as Map; if (map == null) return;
             if (newValue == null && map.SelectedPin != null) { map.SelectedPin = null; return; }
 
-            var pin = map.Pins.FirstOrDefault(p => p.BindingContext == newValue);
+            var pin = map.Pins.FirstOrDefault(p => p._IPin == newValue);
             // could add an exception if null, it means the object is not in the list
             map.SelectedPin = pin;
         }
@@ -244,7 +244,7 @@ namespace Xamarin.Forms.GoogleMaps
         private static void OnSelectedPinChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var map = bindable as Map; if (map == null) return;
-            map.SelectedItem = map.SelectedPin?.BindingContext as IPin;
+            map.SelectedItem = map.SelectedPin?._IPin as IPin;
         }
 
         public Pin SelectedPin { get { return (Pin)GetValue(SelectedPinProperty); } set { SetValue(SelectedPinProperty, value); } }
@@ -397,8 +397,8 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal void SendSelectedPinChanged(Pin selectedPin)
         {
-            var item = selectedPin?.BindingContext as IPin;
-            var args = new SelectedPinChangedEventArgs(selectedPin, selectedPin?.BindingContext as IPin);
+            var item = selectedPin?._IPin;
+            var args = new SelectedPinChangedEventArgs(selectedPin, selectedPin?._IPin);
             SelectedPinChanged?.Invoke(this, args);
             if (SelectedPinChangedCommand?.CanExecute(args) ?? false) SelectedPinChangedCommand.Execute(args);
             if (item?.PinConfig?.PinSelectedCommand?.CanExecute(item?.PinConfig?.PinSelectedCommandParameter ?? args) ?? false)
@@ -407,7 +407,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal bool SendPinClicked(Pin pin)
         { 
-            var item = pin?.BindingContext as IPin;
+            var item = pin?._IPin as IPin;
             var args = new PinClickedEventArgs(pin, item);
             PinClicked?.Invoke(this, args);
             if (PinClickedCommand?.CanExecute(args) ?? false) PinClickedCommand.Execute(args);
@@ -418,7 +418,7 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal void SendInfoWindowClicked(Pin pin)
         {
-            var item = pin?.BindingContext as IPin;
+            var item = pin?._IPin as IPin;
             var args = new InfoWindowClickedEventArgs(pin, item);
             InfoWindowClicked?.Invoke(this, args);
             if (InfoWindowClickedCommand?.CanExecute(args) ?? false) InfoWindowClickedCommand.Execute(args);
@@ -428,8 +428,8 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal void SendPinDragStart(Pin pin)
         {
-            var item = pin?.BindingContext as IPin;
-            var args = new PinDragEventArgs(pin, pin?.BindingContext as IPin);
+            var item = pin?._IPin;
+            var args = new PinDragEventArgs(pin, pin?._IPin);
             PinDragStart?.Invoke(this, args);
             if (PinDragStartCommand?.CanExecute(args) ?? false) PinDragStartCommand.Execute(args);
             if (item?.PinConfig?.PinDragStartCommand?.CanExecute(item?.PinConfig?.PinDragStartCommandParameter ?? args) ?? false)
@@ -438,8 +438,8 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal void SendPinDragEnd(Pin pin)
         {
-            var item = pin?.BindingContext as IPin;
-            var args = new PinDragEventArgs(pin, pin?.BindingContext as IPin);
+            var item = pin?._IPin;
+            var args = new PinDragEventArgs(pin, pin?._IPin);
             PinDragEnd?.Invoke(this, args);
             if (PinDragEndCommand?.CanExecute(args) ?? false) PinDragEndCommand.Execute(args);
             if (item?.PinConfig?.PinDragEndCommand?.CanExecute(item?.PinConfig?.PinDragEndCommandParameter ?? args) ?? false)
@@ -448,8 +448,8 @@ namespace Xamarin.Forms.GoogleMaps
 
         internal void SendPinDragging(Pin pin)
         {
-            var item = pin?.BindingContext as IPin;
-            var args = new PinDragEventArgs(pin, pin?.BindingContext as IPin);
+            var item = pin?._IPin;
+            var args = new PinDragEventArgs(pin, pin?._IPin);
             PinDragging?.Invoke(this, args);
             if (PinDraggingCommand?.CanExecute(args) ?? false) PinDraggingCommand.Execute(args);
             if (item?.PinConfig?.PinDraggingCommand?.CanExecute(item?.PinConfig?.PinDraggingCommandParameter ?? args) ?? false)

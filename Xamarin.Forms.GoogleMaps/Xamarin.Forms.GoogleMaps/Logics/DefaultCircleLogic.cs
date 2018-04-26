@@ -17,11 +17,11 @@ namespace Xamarin.Forms.GoogleMaps.Logics
             if (nativeItem == null)
                 return;
 
-            if (e.PropertyName == Circle.StrokeWidthProperty.PropertyName) OnUpdateStrokeWidth(outerItem, nativeItem);
-            else if (e.PropertyName == Circle.StrokeColorProperty.PropertyName) OnUpdateStrokeColor(outerItem, nativeItem);
-            else if (e.PropertyName == Circle.FillColorProperty.PropertyName) OnUpdateFillColor(outerItem, nativeItem);
-            else if (e.PropertyName == Circle.CenterProperty.PropertyName) OnUpdateCenter(outerItem, nativeItem);
-            else if (e.PropertyName == Circle.RadiusProperty.PropertyName) OnUpdateRadius(outerItem, nativeItem);
+            if (e.PropertyName == nameof(Circle.StrokeWidth)) OnUpdateStrokeWidth(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Circle.StrokeColor)) OnUpdateStrokeColor(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Circle.FillColor)) OnUpdateFillColor(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Circle.Center)) OnUpdateCenter(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Circle.Radius)) OnUpdateRadius(outerItem, nativeItem);
         }
 
         protected abstract void OnUpdateStrokeWidth(Circle outerItem, TNative nativeItem);

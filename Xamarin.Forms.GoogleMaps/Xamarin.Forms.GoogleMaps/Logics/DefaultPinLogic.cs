@@ -16,13 +16,13 @@ namespace Xamarin.Forms.GoogleMaps
             if (nativeItem == null)
                 return;
 
-            if (e.PropertyName == Pin.AddressProperty.PropertyName) OnUpdateAddress(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.LabelProperty.PropertyName) OnUpdateLabel(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.PositionProperty.PropertyName) OnUpdatePosition(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.TypeProperty.PropertyName) OnUpdateType(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.IconProperty.PropertyName) OnUpdateIcon(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.IsDraggableProperty.PropertyName) OnUpdateIsDraggable(outerItem, nativeItem);
-            else if (e.PropertyName == Pin.RotationProperty.PropertyName) OnUpdateRotation(outerItem, nativeItem);
+            if (e.PropertyName == nameof(Pin.Address)) OnUpdateAddress(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Pin.Label)) OnUpdateLabel(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Pin.Position)) OnUpdatePosition(outerItem, nativeItem);
+            //else if (e.PropertyName == nameof(Pin.Type) ) OnUpdateType(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Pin.Icon)) OnUpdateIcon(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Pin.IsDraggable)) OnUpdateIsDraggable(outerItem, nativeItem);
+            else if (e.PropertyName == nameof(Pin.Rotation)) OnUpdateRotation(outerItem, nativeItem);
             else if (e.PropertyName == nameof(Pin.ZIndex)) OnUpdateZIndex(outerItem, nativeItem);
         }
 

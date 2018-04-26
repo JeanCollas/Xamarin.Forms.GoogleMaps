@@ -148,20 +148,16 @@ namespace Xamarin.Forms.GoogleMaps.Android
         {
             if (map != null)
             {
-                map.SetOnMapClickListener(this);
-                map.SetOnMapLongClickListener(this);
-                map.UiSettings.MapToolbarEnabled = false;
-                map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons;
-                map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled;
-                map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
-                try
-                {
-                    map.MyLocationEnabled = Map.IsShowingUser;
-                }
-                catch { }
-                map.UiSettings.MyLocationButtonEnabled = false;
-                map.TrafficEnabled = Map.IsTrafficEnabled;
-
+                try { map.SetOnMapClickListener(this); } catch { }
+                try { map.SetOnMapLongClickListener(this); } catch { }
+                try { map.UiSettings.MapToolbarEnabled = false; } catch { }              
+                try { map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons; } catch { }              
+                try { map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled; } catch { }              
+                try { map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled; } catch { }               
+                try { map.MyLocationEnabled = Map.IsShowingUser; } catch { }                
+                try { map.UiSettings.MyLocationButtonEnabled = false; } catch { }               
+                try {map.TrafficEnabled = Map.IsTrafficEnabled; } catch { }
+                
                 SetMapType();
             }
 
@@ -265,11 +261,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 return;
 
             if (e.PropertyName == nameof(Map.IsShowingUser))
-                try
-                {
-                    NativeMap.MyLocationEnabled = Map.IsShowingUser;
-                }
-                catch { }
+                try { NativeMap.MyLocationEnabled = Map.IsShowingUser; } catch { } 
             else if (e.PropertyName == nameof(Map.HasScrollEnabled))
                 NativeMap.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
             else if (e.PropertyName == nameof(Map.HasZoomEnabled))
@@ -391,6 +383,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 _disposed = true;
                 try
                 {
+<<<<<<< HEAD
                     if (this.Map != null)
                     {
                         MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName);
@@ -409,6 +402,10 @@ namespace Xamarin.Forms.GoogleMaps.Android
                         catch { }
                         NativeMap.Dispose();
                     }
+=======
+                    try { NativeMap.MyLocationEnabled = false; } catch { }  
+                    NativeMap.Dispose();
+>>>>>>> cc63021f17a67170f0edf24603bc7c2aa214fd88
                 }
                 catch { }
             }

@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace Xamarin.Forms.GoogleMaps.Logics
 {
     internal abstract class DefaultLogic<TOuter, TNative, TNativeMap> : BaseLogic<TNativeMap>
-        where TOuter : BindableObject
+        where TOuter : INotifyPropertyChanged
         where TNative : class
         where TNativeMap : class
     {
