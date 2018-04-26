@@ -383,7 +383,6 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 _disposed = true;
                 try
                 {
-<<<<<<< HEAD
                     if (this.Map != null)
                     {
                         MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName);
@@ -402,10 +401,6 @@ namespace Xamarin.Forms.GoogleMaps.Android
                         catch { }
                         NativeMap.Dispose();
                     }
-=======
-                    try { NativeMap.MyLocationEnabled = false; } catch { }  
-                    NativeMap.Dispose();
->>>>>>> cc63021f17a67170f0edf24603bc7c2aa214fd88
                 }
                 catch { }
             }
