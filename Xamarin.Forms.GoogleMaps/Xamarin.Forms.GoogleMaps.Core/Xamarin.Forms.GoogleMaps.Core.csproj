@@ -6,15 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NotifyClass.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\MD.App\src\MD.App.Common\MD.App.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

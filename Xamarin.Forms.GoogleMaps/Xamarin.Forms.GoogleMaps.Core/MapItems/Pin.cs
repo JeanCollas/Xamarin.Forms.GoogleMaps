@@ -1,4 +1,4 @@
-﻿using MapDance.Tools;
+﻿
 using System;
 
 namespace Xamarin.Forms.GoogleMaps

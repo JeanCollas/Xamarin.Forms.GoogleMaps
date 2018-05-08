@@ -1,5 +1,4 @@
-﻿using MapDance.Tools;
-
+﻿
 namespace Xamarin.Forms.GoogleMaps
 {
     public class Circle : NotifyClass//BindableObject
