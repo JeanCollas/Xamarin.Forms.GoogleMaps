@@ -315,7 +315,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
             Map.SendMapLongClicked(point.ToPosition());
         }
 
-//        différencier mapcenter et screencenter
+        //        différencier mapcenter et screencenter
 
         void UpdateMapRegion(LatLng pos)
         {
@@ -381,21 +381,28 @@ namespace Xamarin.Forms.GoogleMaps.Android
             if (disposing && !_disposed)
             {
                 _disposed = true;
-
-                if (this.Map != null)
+                try
                 {
-                    MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName);
-                    MessagingCenter.Unsubscribe<Map>(this, Map.CenterOnMyLocationMessageName);
-                }
+                    if (this.Map != null)
+                    {
+                        MessagingCenter.Unsubscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName);
+                        MessagingCenter.Unsubscribe<Map>(this, Map.CenterOnMyLocationMessageName);
+                    }
 
-                foreach (var logic in _logics)
-                    logic.Unregister(NativeMap, Map);
+                    foreach (var logic in _logics)
+                        logic.Unregister(NativeMap, Map);
 
-                if (NativeMap != null)
-                {
-                    try { NativeMap.MyLocationEnabled = false; } catch { }  
-                    NativeMap.Dispose();
+                    if (NativeMap != null)
+                    {
+                        try
+                        {
+                            NativeMap.MyLocationEnabled = false;
+                        }
+                        catch { }
+                        NativeMap.Dispose();
+                    }
                 }
+                catch { }
             }
 
             base.Dispose(disposing);
