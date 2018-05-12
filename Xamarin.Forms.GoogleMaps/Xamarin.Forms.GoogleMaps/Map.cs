@@ -94,6 +94,17 @@ namespace Xamarin.Forms.GoogleMaps
         #region CirclesSource Property
         public static readonly BindableProperty CirclesSourceProperty = BindableProperty.Create(nameof(CirclesSource), typeof(ObservableCollection<ICircle>), typeof(Map), null, propertyChanged: OnCirclesSourceChanged);
         public ObservableCollection<ICircle> CirclesSource { get { return (ObservableCollection<ICircle>)GetValue(CirclesSourceProperty); } set { SetValue(CirclesSourceProperty, value); } }
+
+        internal void NotifyException(Exception exc)
+        {
+            try
+            {
+                HandledExceptionOccured?.Invoke(exc);
+            }
+            catch { }
+        }
+        public event Action<Exception> HandledExceptionOccured;
+
         private void Register(ObservableCollection<ICircle> source) { if (source != null) source.CollectionChanged += OnCircleSourceCollectionChanged; }
         private void Unregister(ObservableCollection<ICircle> source) { if (source != null) source.CollectionChanged -= OnCircleSourceCollectionChanged; }
 
@@ -483,7 +494,17 @@ namespace Xamarin.Forms.GoogleMaps
         public const string CenterOnMyLocationMessageName = "CenterOnMyLocation";
         public void CenterOnMyLocation()
         {
-            MessagingCenter.Send(this, CenterOnMyLocationMessageName);
+            try
+            {
+                MessagingCenter.Send(this, CenterOnMyLocationMessageName);
+            }
+            catch(Exception exc)
+            {
+                NotifyException(exc);
+#if DEBUG
+                throw;
+#endif
+            }
         }
     }
 }

@@ -111,11 +111,18 @@ namespace Xamarin.Forms.GoogleMaps.Android
             MessagingCenter.Subscribe<Map, MoveToRegionMessage>(this, Map.MoveMessageName, OnMoveToRegionMessage, Map);
             MessagingCenter.Subscribe<Map>(this, Map.CenterOnMyLocationMessageName, (s) =>
             {
-                var loc = NativeMap?.MyLocation;
-                if (loc != null)
+                try
                 {
-                    Map.MyLocation = new Position(loc.Latitude, loc.Longitude);
-                    NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(loc.Latitude, loc.Longitude)));
+                    var loc = NativeMap?.MyLocation;
+                    if (loc != null)
+                    {
+                        Map.MyLocation = new Position(loc.Latitude, loc.Longitude);
+                        NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(loc.Latitude, loc.Longitude)));
+                    }
+                }
+                catch (System.Exception exc){
+                    Map.NotifyException(exc);
+
                 }
             });
 
