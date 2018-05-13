@@ -120,9 +120,9 @@ namespace Xamarin.Forms.GoogleMaps.Android
                         NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(loc.Latitude, loc.Longitude)));
                     }
                 }
-                catch (System.Exception exc){
+                catch (System.Exception exc)
+                {
                     Map.NotifyException(exc);
-
                 }
             });
 
@@ -155,16 +155,17 @@ namespace Xamarin.Forms.GoogleMaps.Android
         {
             if (map != null)
             {
-                try { map.SetOnMapClickListener(this); } catch { }
-                try { map.SetOnMapLongClickListener(this); } catch { }
-                try { map.UiSettings.MapToolbarEnabled = false; } catch { }              
-                try { map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons; } catch { }              
-                try { map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled; } catch { }              
-                try { map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled; } catch { }               
-                try { map.MyLocationEnabled = Map.IsShowingUser; } catch { }                
-                try { map.UiSettings.MyLocationButtonEnabled = false; } catch { }               
-                try {map.TrafficEnabled = Map.IsTrafficEnabled; } catch { }
-                
+                try { map.SetOnMapClickListener(this); } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.SetOnMapLongClickListener(this); } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.UiSettings.MapToolbarEnabled = false; } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.UiSettings.ZoomControlsEnabled = Map.HasZoomButtons; } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.UiSettings.ZoomGesturesEnabled = Map.HasZoomEnabled; } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled; } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.MyLocationEnabled = Map.IsShowingUser; } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.UiSettings.MyLocationButtonEnabled = false; } catch (System.Exception exc) { Map.NotifyException(exc); }
+                try { map.TrafficEnabled = Map.IsTrafficEnabled; } catch (System.Exception exc){Map.NotifyException(exc);}
+
+
                 SetMapType();
             }
 
@@ -217,6 +218,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
             }
             catch (IllegalStateException exc)
             {
+                Map.NotifyException(exc);
                 System.Diagnostics.Debug.WriteLine("MoveToRegion exception: " + exc);
             }
         }
@@ -268,7 +270,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 return;
 
             if (e.PropertyName == nameof(Map.IsShowingUser))
-                try { NativeMap.MyLocationEnabled = Map.IsShowingUser; } catch { } 
+                try { NativeMap.MyLocationEnabled = Map.IsShowingUser; } catch { }
             else if (e.PropertyName == nameof(Map.HasScrollEnabled))
                 NativeMap.UiSettings.ScrollGesturesEnabled = Map.HasScrollEnabled;
             else if (e.PropertyName == nameof(Map.HasZoomEnabled))
@@ -284,26 +286,33 @@ namespace Xamarin.Forms.GoogleMaps.Android
 
         void SetMapType()
         {
-            var map = NativeMap;
-            if (map == null)
-                return;
-
-            switch (Map.MapType)
+            try
             {
-                case MapType.Street:
-                    map.MapType = GoogleMap.MapTypeNormal;
-                    break;
-                case MapType.Satellite:
-                    map.MapType = GoogleMap.MapTypeSatellite;
-                    break;
-                case MapType.Hybrid:
-                    map.MapType = GoogleMap.MapTypeHybrid;
-                    break;
-                case MapType.None:
-                    map.MapType = GoogleMap.MapTypeNone;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(Map.MapType));
+                var map = NativeMap;
+                if (map == null)
+                    return;
+
+                switch (Map.MapType)
+                {
+                    case MapType.Street:
+                        map.MapType = GoogleMap.MapTypeNormal;
+                        break;
+                    case MapType.Satellite:
+                        map.MapType = GoogleMap.MapTypeSatellite;
+                        break;
+                    case MapType.Hybrid:
+                        map.MapType = GoogleMap.MapTypeHybrid;
+                        break;
+                    case MapType.None:
+                        map.MapType = GoogleMap.MapTypeNone;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(Map.MapType));
+                }
+            }
+            catch (System.Exception exc)
+            {
+                Map?.NotifyException(exc);
             }
         }
 
@@ -361,7 +370,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 }
                 finally { map2.CameraMoving = false; }
             }
-            catch { }
+            catch (System.Exception exc) { Map.NotifyException(exc); }
 
             /////////////////// iOS way
             //var mapModel = (Map)Element;
@@ -409,7 +418,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                         NativeMap.Dispose();
                     }
                 }
-                catch { }
+                catch (System.Exception exc) { Map.NotifyException(exc); }
             }
 
             base.Dispose(disposing);
