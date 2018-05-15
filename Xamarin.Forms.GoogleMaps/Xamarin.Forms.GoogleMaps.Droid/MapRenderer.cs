@@ -114,6 +114,11 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 try
                 {
                     var loc = NativeMap?.MyLocation;
+                }
+                catch { }
+                try
+                {
+                    var loc = NativeMap?.MyLocation;
                     if (loc != null)
                     {
                         Map.MyLocation = new Position(loc.Latitude, loc.Longitude);
@@ -122,6 +127,7 @@ namespace Xamarin.Forms.GoogleMaps.Android
                 }
                 catch (System.Exception exc)
                 {
+                    Map.NotifyMyLocationError();
                     Map.NotifyException(exc);
                 }
             });

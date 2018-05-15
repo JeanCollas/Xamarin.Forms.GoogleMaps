@@ -233,7 +233,9 @@ namespace Xamarin.Forms.GoogleMaps.iOS
                 //((MapView)Control).Settings.MyLocationButton = ((Map)Element).IsShowingUser;
                 ((MapView)Control).Settings.MyLocationButton = false;
             }
-            catch (Exception exc) { Map.NotifyException(exc); }
+            catch (Exception exc) {
+                Map.NotifyMyLocationError();
+                Map.NotifyException(exc); }
         }
 
         void UpdateIsTrafficEnabled()

@@ -95,6 +95,16 @@ namespace Xamarin.Forms.GoogleMaps
         public static readonly BindableProperty CirclesSourceProperty = BindableProperty.Create(nameof(CirclesSource), typeof(ObservableCollection<ICircle>), typeof(Map), null, propertyChanged: OnCirclesSourceChanged);
         public ObservableCollection<ICircle> CirclesSource { get { return (ObservableCollection<ICircle>)GetValue(CirclesSourceProperty); } set { SetValue(CirclesSourceProperty, value); } }
 
+        internal void NotifyMyLocationError()
+        {
+            try
+            {
+                MyLocationError?.Invoke();
+            }
+            catch { }
+        }
+        public event Action MyLocationError;
+
         internal void NotifyException(Exception exc)
         {
             try

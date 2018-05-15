@@ -11,7 +11,7 @@ using Xamarin.Forms.Internals;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: InternalsVisibleTo("Xamarin.Forms.GoogleMaps.Android")]
+[assembly: InternalsVisibleTo("Xamarin.Forms.GoogleMaps.Droid")]
 [assembly: InternalsVisibleTo("Xamarin.Forms.GoogleMaps.iOS")]
 [assembly: InternalsVisibleTo("Xamarin.Forms.GoogleMaps.UWP")]
 [assembly: Preserve]
