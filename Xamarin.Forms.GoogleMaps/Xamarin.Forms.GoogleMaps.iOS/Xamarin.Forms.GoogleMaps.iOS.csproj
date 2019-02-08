@@ -98,10 +98,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\MD.App\src\MD.App.Common\MD.App.Common.csproj">
-      <Project>{1062afe0-c56e-431d-8a30-d9e741412f67}</Project>
-      <Name>MD.App.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.GoogleMaps.Core\Xamarin.Forms.GoogleMaps.Core.csproj">
       <Project>{d6d08206-90ee-4ae9-80d9-2eb4d7e08d8a}</Project>
       <Name>Xamarin.Forms.GoogleMaps.Core</Name>
